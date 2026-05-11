@@ -11,8 +11,8 @@ export default function Footer() {
                     <div className="flex items-center gap-2 text-dracula-fg font-semibold text-xl">
                         <Zap className="w-5 h-5 text-dracula-cyan fill-dracula-cyan" />
                         <span>
-                            <span className="text-dracula-fg">API</span>
-                            <span className="text-dracula-cyan">-Flash</span>
+                            <span className="text-dracula-fg">api</span>
+                            <span className="text-dracula-cyan">Flash</span>
                         </span>
                     </div>
                     <p className="text-sm text-dracula-comment text-center md:text-left max-w-sm leading-relaxed">
@@ -30,6 +30,14 @@ export default function Footer() {
                     >
                         <FaGithub className="w-4 h-4" />
                         <span className="font-medium">emanuelVINI01/api-flash</span>
+                    </a>
+                    <a
+                        href="https://apiflash.emanuelvini.dev"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-dracula-cyan hover:text-dracula-fg transition-colors font-medium underline decoration-dracula-cyan/30 hover:decoration-dracula-cyan underline-offset-4"
+                    >
+                        apiflash.emanuelvini.dev
                     </a>
 
                     <div className="flex items-center gap-1.5 mt-1">
@@ -50,7 +58,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <div className="mt-10 pt-6 w-full max-w-5xl px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-dracula-comment border-t border-dracula-card/50">
-                <p>&copy; {new Date().getFullYear()} API-Flash. Todos os direitos reservados.</p>
+                <p>&copy; {new Date().getFullYear()} apiFlash. Todos os direitos reservados.</p>
                 <div className="flex items-center gap-4 mt-3 sm:mt-0">
                     <span className="opacity-50">v1.0.0</span>
                 </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import type { FormEvent } from 'react';
 import { Send, Loader2 } from 'lucide-react';
 import type { HeaderRow } from './HeadersEditor';
 
@@ -49,7 +49,7 @@ export default function RequestBar({
   isLoading,
   setIsLoading,
 }: RequestBarProps) {
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const trimmed = url.trim();
@@ -69,8 +69,6 @@ export default function RequestBar({
     const finalUrl = trimmed.startsWith('http') ? trimmed : `https://${trimmed}`;
 
     setIsLoading(true);
-    const start = performance.now();
-
     try {
       const customHeaders: Record<string, string> = {};
       headers.forEach((h) => {
@@ -79,41 +77,29 @@ export default function RequestBar({
         }
       });
 
-      const options: RequestInit = {
+      const proxyBody = {
+        url: finalUrl,
         method,
         headers: {
           'Content-Type': 'application/json',
           ...customHeaders,
         },
+        body: ['POST', 'PUT', 'PATCH'].includes(method) && body.trim() ? body : undefined,
       };
 
-      if (['POST', 'PUT', 'PATCH'].includes(method) && body.trim()) {
-        options.body = body;
-      }
-
-      const response = await fetch(finalUrl, options);
-      const duration = Math.round(performance.now() - start);
-
-      const headersObj: Record<string, string> = {};
-      response.headers.forEach((value, key) => {
-        headersObj[key] = value;
+      const response = await fetch('/api/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(proxyBody),
       });
 
-      let responseBody: unknown;
-      const contentType = response.headers.get('content-type') ?? '';
-      if (contentType.includes('application/json')) {
-        responseBody = await response.json();
-      } else {
-        responseBody = await response.text();
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro do servidor: ${response.status}`);
       }
 
-      onResponse({
-        status: response.status,
-        statusText: response.statusText,
-        body: responseBody,
-        headers: headersObj,
-        duration,
-      });
+      const proxyData: ResponseData = await response.json();
+      onResponse(proxyData);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Erro desconhecido.';
       if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {

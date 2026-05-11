@@ -38,8 +38,8 @@ export default function Home() {
               <Zap className="w-4 h-4 text-dracula-cyan fill-dracula-cyan" />
             </div>
             <span className="text-xl font-bold tracking-tight">
-              <span className="text-dracula-fg">API</span>
-              <span className="text-dracula-cyan">-Flash</span>
+              <span className="text-dracula-fg">api</span>
+              <span className="text-dracula-cyan">Flash</span>
             </span>
           </div>
           <span className="text-xs font-mono text-dracula-comment bg-dracula-card/50 px-3 py-1 rounded-full border border-dracula-card">
