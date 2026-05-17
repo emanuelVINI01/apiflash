@@ -1,68 +1,80 @@
-import { Zap, Heart } from 'lucide-react';
+import Link from "next/link";
+import { ExternalLink, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
+const footerLinks = [
+  { label: "Workbench", href: "/" },
+  { label: "Collections", href: "/collections" },
+  { label: "History", href: "/history" },
+  { label: "Docs", href: "/docs" },
+];
+
 export default function Footer() {
-    return (
-        <footer className="w-full mt-16 py-10 border-t border-dracula-card bg-gradient-to-b from-dracula-bg to-dracula-purple/5 text-dracula-comment flex flex-col items-center justify-center transition-colors duration-300">
-            <div className="max-w-5xl w-full px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+  return (
+    <footer className="relative z-10 w-full border-t border-dracula-card/70 bg-dracula-bg text-dracula-comment">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-32 pt-10 sm:gap-10 sm:px-6 md:py-12">
+        <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr_0.8fr] md:items-start">
+          <div className="max-w-md">
+            <Link href="/" className="inline-flex items-center gap-3 text-dracula-fg">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-dracula-cyan/40 bg-dracula-cyan/10 shadow-[0_0_22px_rgba(139,233,253,0.18)]">
+                <Zap className="h-5 w-5 fill-dracula-cyan text-dracula-cyan" />
+              </span>
+              <span className="font-semibold tracking-tight">
+                api<span className="text-dracula-cyan">Flash</span>
+              </span>
+            </Link>
+            <p className="mt-4 text-sm leading-relaxed">
+              Mobile-first HTTP workbench for fast endpoint checks, browser-side request history, reusable collections and a Dracula developer UI.
+            </p>
+          </div>
 
-                {/* Brand & Description */}
-                <div className="flex flex-col items-center md:items-start gap-3">
-                    <div className="flex items-center gap-2 text-dracula-fg font-semibold text-xl">
-                        <Zap className="w-5 h-5 text-dracula-cyan fill-dracula-cyan" />
-                        <span>
-                            <span className="text-dracula-fg">api</span>
-                            <span className="text-dracula-cyan">Flash</span>
-                        </span>
-                    </div>
-                    <p className="text-sm text-dracula-comment text-center md:text-left max-w-sm leading-relaxed">
-                        Um cliente HTTP minimalista para testes rápidos de endpoints. Rápido como um raio, sem configuração.
-                    </p>
-                </div>
-
-                {/* Links */}
-                <div className="flex flex-col items-center md:items-end gap-3 text-sm">
-                    <a
-                        href="https://github.com/emanuelVINI01/api-flash"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-2 text-dracula-fg hover:text-dracula-cyan transition-colors bg-dracula-cyan/10 px-4 py-2 rounded-lg border border-dracula-cyan/20 hover:border-dracula-cyan/50"
-                    >
-                        <FaGithub className="w-4 h-4" />
-                        <span className="font-medium">emanuelVINI01/api-flash</span>
-                    </a>
-                    <a
-                        href="https://apiflash.emanuelvini.dev"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-dracula-cyan hover:text-dracula-fg transition-colors font-medium underline decoration-dracula-cyan/30 hover:decoration-dracula-cyan underline-offset-4"
-                    >
-                        apiflash.emanuelvini.dev
-                    </a>
-
-                    <div className="flex items-center gap-1.5 mt-1">
-                        <span>Desenvolvido com</span>
-                        <Heart className="w-4 h-4 text-dracula-red fill-dracula-red animate-pulse" />
-                        <span>por</span>
-                        <a
-                            href="https://github.com/emanuelVINI01"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-dracula-fg hover:text-dracula-cyan transition-colors font-medium ml-1 underline decoration-dracula-cyan/30 hover:decoration-dracula-cyan underline-offset-4"
-                        >
-                            emanuelVINI01
-                        </a>
-                    </div>
-                </div>
+          <div>
+            <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-dracula-fg">
+              <Sparkles className="h-3.5 w-3.5 text-dracula-purple" />
+              Navigation
             </div>
-
-            {/* Copyright */}
-            <div className="mt-10 pt-6 w-full max-w-5xl px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-dracula-comment border-t border-dracula-card/50">
-                <p>&copy; {new Date().getFullYear()} apiFlash. Todos os direitos reservados.</p>
-                <div className="flex items-center gap-4 mt-3 sm:mt-0">
-                    <span className="opacity-50">v1.0.0</span>
-                </div>
+            <div className="grid gap-2 text-sm">
+              {footerLinks.map((link) => (
+                <Link key={link.href} href={link.href} className="transition-colors hover:text-dracula-cyan">
+                  {link.label}
+                </Link>
+              ))}
             </div>
-        </footer>
-    );
+          </div>
+
+          <div>
+            <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-dracula-fg">
+              <ShieldCheck className="h-3.5 w-3.5 text-dracula-green" />
+              Project
+            </div>
+            <div className="grid gap-3 text-sm">
+              <a
+                href="https://github.com/emanuelVINI01/api-flash"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-fit items-center gap-2 rounded-lg border border-dracula-cyan/20 bg-dracula-cyan/10 px-3 py-2 text-dracula-fg transition-colors hover:border-dracula-cyan/50 hover:text-dracula-cyan"
+              >
+                <FaGithub className="h-4 w-4" />
+                Repository
+              </a>
+              <a
+                href="https://apiflash.emanuelvini.dev"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-fit items-center gap-2 transition-colors hover:text-dracula-cyan"
+              >
+                Live app
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 border-t border-dracula-card/50 pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+          <p>&copy; {new Date().getFullYear()} apiFlash. Built as a technology-focused developer tool.</p>
+          <p className="text-dracula-comment/80">Next.js + Framer Motion + Dracula</p>
+        </div>
+      </div>
+    </footer>
+  );
 }

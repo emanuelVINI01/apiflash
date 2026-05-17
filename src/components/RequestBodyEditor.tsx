@@ -48,7 +48,7 @@ export default function RequestBodyEditor({ body, method, onChange }: RequestBod
       <div className="w-full rounded-xl border border-dracula-card bg-dracula-card/30 p-6 flex items-center justify-center gap-3 text-dracula-comment">
         <Code2 className="w-5 h-5 opacity-50" />
         <span className="text-sm font-mono">
-          O método <span className="text-dracula-cyan font-semibold">{method}</span> não possui corpo de requisição.
+          The <span className="text-dracula-cyan font-semibold">{method}</span> method does not send a request body.
         </span>
       </div>
     );
@@ -57,26 +57,26 @@ export default function RequestBodyEditor({ body, method, onChange }: RequestBod
   return (
     <div className="w-full flex flex-col gap-2">
       {/* Toolbar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
           <Code2 className="w-4 h-4 text-dracula-purple" />
           <span className="text-xs font-semibold text-dracula-comment uppercase tracking-widest">
             Request Body
           </span>
           <span className="text-xs text-dracula-comment">(JSON)</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Validation indicator */}
           {body.trim() && (
-            <div className={`flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-md ${
+            <div className={`flex min-w-0 items-center gap-1 rounded-md px-2 py-0.5 font-mono text-xs ${
               valid
                 ? 'text-dracula-green bg-dracula-green/10'
                 : 'text-dracula-red bg-dracula-red/10'
             }`}>
               {valid ? (
-                <><CheckCircle2 className="w-3 h-3" /> JSON válido</>
+                <><CheckCircle2 className="w-3 h-3" /> Valid JSON</>
               ) : (
-                <><AlertCircle className="w-3 h-3" /> JSON inválido</>
+                <><AlertCircle className="w-3 h-3" /> Invalid JSON</>
               )}
             </div>
           )}
@@ -84,30 +84,30 @@ export default function RequestBodyEditor({ body, method, onChange }: RequestBod
           {valid && body.trim() && (
             <button
               onClick={handleFormat}
-              className="text-xs px-3 py-1 rounded-lg border border-dracula-card text-dracula-comment hover:text-dracula-fg hover:border-dracula-comment transition-all duration-200"
+              className="rounded-lg border border-dracula-card px-3 py-1 text-xs text-dracula-comment transition-all duration-200 hover:border-dracula-comment hover:text-dracula-fg"
             >
-              Formatar
+              Format
             </button>
           )}
           {/* Preview toggle */}
           <button
             onClick={() => setPreviewMode((p) => !p)}
-            className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-lg border border-dracula-card text-dracula-comment hover:text-dracula-fg hover:border-dracula-comment transition-all duration-200"
+            className="flex items-center gap-1.5 rounded-lg border border-dracula-card px-3 py-1 text-xs text-dracula-comment transition-all duration-200 hover:border-dracula-comment hover:text-dracula-fg"
           >
             {previewMode ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-            {previewMode ? 'Editar' : 'Preview'}
+            {previewMode ? 'Edit' : 'Preview'}
           </button>
         </div>
       </div>
 
       {/* Editor / Preview */}
       <div
-        className={`relative rounded-xl border overflow-hidden transition-all duration-200 ${
+        className={`relative min-w-0 overflow-hidden rounded-xl border transition-all duration-200 ${
           focused && !previewMode ? 'border-dracula-purple ring-1 ring-dracula-purple/30' : 'border-dracula-card'
         }`}
       >
         {previewMode ? (
-          <div className="min-h-[180px] overflow-auto">
+          <div className="min-h-[180px] max-w-full overflow-auto">
             <SyntaxHighlighter
               language="json"
               style={dracula}
@@ -121,7 +121,7 @@ export default function RequestBodyEditor({ body, method, onChange }: RequestBod
               }}
               wrapLongLines
             >
-              {body.trim() ? (valid ? prettyJson(body) : body) : '// Nenhum conteúdo para exibir'}
+              {body.trim() ? (valid ? prettyJson(body) : body) : '// Nothing to preview'}
             </SyntaxHighlighter>
           </div>
         ) : (
@@ -133,7 +133,7 @@ export default function RequestBodyEditor({ body, method, onChange }: RequestBod
             placeholder={`{\n  "key": "value"\n}`}
             spellCheck={false}
             className="
-              w-full min-h-[180px] p-4 bg-dracula-card/50 text-dracula-fg
+              w-full min-w-0 min-h-[180px] p-4 bg-dracula-card/50 text-dracula-fg
               font-mono text-sm leading-relaxed resize-y
               placeholder-dracula-comment/50
               focus:outline-none

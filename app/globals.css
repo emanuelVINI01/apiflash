@@ -1,25 +1,35 @@
 @import "tailwindcss";
 
 :root {
+  --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-geist-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
   --dracula-bg: #282a36;
+  --dracula-surface: #343746;
   --dracula-card: #44475a;
+  --dracula-border: #44475a;
   --dracula-fg: #f8f8f2;
-  --dracula-comment: #6272a4;
+  --dracula-comment: #a7b0c8;
   --dracula-cyan: #8be9fd;
   --dracula-purple: #bd93f9;
   --dracula-green: #50fa7b;
+  --dracula-pink: #ff79c6;
+  --dracula-yellow: #f1fa8c;
   --dracula-orange: #ffb86c;
   --dracula-red: #ff5555;
 }
 
 @theme inline {
   --color-dracula-bg: var(--dracula-bg);
+  --color-dracula-surface: var(--dracula-surface);
   --color-dracula-card: var(--dracula-card);
+  --color-dracula-border: var(--dracula-border);
   --color-dracula-fg: var(--dracula-fg);
   --color-dracula-comment: var(--dracula-comment);
   --color-dracula-cyan: var(--dracula-cyan);
   --color-dracula-purple: var(--dracula-purple);
   --color-dracula-green: var(--dracula-green);
+  --color-dracula-pink: var(--dracula-pink);
+  --color-dracula-yellow: var(--dracula-yellow);
   --color-dracula-orange: var(--dracula-orange);
   --color-dracula-red: var(--dracula-red);
 
@@ -28,9 +38,57 @@
 }
 
 body {
-  background-color: var(--dracula-bg);
+  width: 100%;
+  max-width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: var(--dracula-bg);
   color: var(--dracula-fg);
   font-family: var(--font-geist-sans, Arial, sans-serif);
+  position: relative;
+}
+
+html {
+  width: 100%;
+  max-width: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:where(main, section, article, header, footer, nav, aside, div, form, label, ul, ol, li) {
+  min-width: 0;
+}
+
+:where(h1, h2, h3, h4, p, a, span, button, code, pre) {
+  overflow-wrap: anywhere;
+}
+
+:where(img, video, canvas, svg, table) {
+  max-width: 100%;
+}
+
+:where(pre, code) {
+  white-space: pre-wrap;
+}
+
+@media (max-width: 640px) {
+  :where(input, select, textarea) {
+    font-size: 16px;
+  }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
 }
 
 /* Scrollbar styling */
@@ -52,5 +110,32 @@ body {
 /* Selection */
 ::selection {
   background: var(--dracula-purple);
-  color: var(--dracula-fg);
+  color: var(--dracula-bg);
+}
+
+.glass {
+  background: rgba(36, 39, 54, 0.68);
+  border: 1px solid rgba(68, 71, 90, 0.68);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.terminal-scan::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(139, 233, 253, 0.12), transparent);
+  opacity: 0.18;
+  transform: translateY(-100%);
+  animation: terminal-scan 5.5s ease-in-out infinite;
+}
+
+@keyframes terminal-scan {
+  0%, 22% {
+    transform: translateY(-100%);
+  }
+  58%, 100% {
+    transform: translateY(100%);
+  }
 }

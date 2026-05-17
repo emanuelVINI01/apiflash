@@ -54,7 +54,7 @@ export default function RequestBar({
 
     const trimmed = url.trim();
     if (!trimmed) {
-      onError('Por favor, insira uma URL válida.');
+      onError('Enter a valid URL before sending.');
       return;
     }
 
@@ -62,7 +62,7 @@ export default function RequestBar({
     try {
       new URL(trimmed.startsWith('http') ? trimmed : `https://${trimmed}`);
     } catch {
-      onError('URL inválida. Verifique o formato (ex: https://api.exemplo.com/endpoint).');
+      onError('Invalid URL. Check the format, for example https://api.example.com/endpoint.');
       return;
     }
 
@@ -95,17 +95,17 @@ export default function RequestBar({
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Erro do servidor: ${response.status}`);
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
       const proxyData: ResponseData = await response.json();
       onResponse(proxyData);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Erro desconhecido.';
+      const msg = err instanceof Error ? err.message : 'Unknown error.';
       if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
-        onError('Não foi possível conectar ao servidor. Verifique a URL e sua conexão.');
+        onError('Could not connect to the server. Check the URL and your connection.');
       } else {
-        onError(`Erro na requisição: ${msg}`);
+        onError(`Request error: ${msg}`);
       }
     } finally {
       setIsLoading(false);
@@ -114,15 +114,15 @@ export default function RequestBar({
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row">
         {/* Method Select */}
-        <div className="relative shrink-0">
+        <div className="relative min-w-0 shrink-0">
           <select
             value={method}
             onChange={(e) => onMethodChange(e.target.value as HttpMethod)}
             disabled={isLoading}
             className={`
-              h-12 pl-4 pr-8 rounded-xl border border-dracula-card bg-dracula-card 
+              h-12 w-full pl-4 pr-8 rounded-xl border border-dracula-card bg-dracula-card sm:w-auto
               font-mono font-bold text-sm appearance-none cursor-pointer
               focus:outline-none focus:border-dracula-purple focus:ring-1 focus:ring-dracula-purple/50
               transition-all duration-200 disabled:opacity-50
@@ -148,10 +148,10 @@ export default function RequestBar({
           type="text"
           value={url}
           onChange={(e) => onUrlChange(e.target.value)}
-          placeholder="https://api.exemplo.com/v1/users"
+          placeholder="https://api.example.com/v1/users"
           disabled={isLoading}
           className="
-            flex-1 h-12 px-4 rounded-xl border border-dracula-card bg-dracula-card
+            min-w-0 flex-1 h-12 px-4 rounded-xl border border-dracula-card bg-dracula-card
             text-dracula-fg placeholder-dracula-comment font-mono text-sm
             focus:outline-none focus:border-dracula-purple focus:ring-1 focus:ring-dracula-purple/50
             hover:border-dracula-comment transition-all duration-200 disabled:opacity-50
@@ -163,23 +163,23 @@ export default function RequestBar({
           type="submit"
           disabled={isLoading || !url.trim()}
           className="
-            h-12 px-6 rounded-xl font-semibold text-sm
+            h-12 justify-center rounded-xl px-6 text-sm font-semibold
             bg-dracula-purple text-dracula-bg
             hover:opacity-90 active:scale-95
             focus:outline-none focus:ring-2 focus:ring-dracula-purple/50
             disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100
-            transition-all duration-200 flex items-center gap-2 shrink-0
+            transition-all duration-200 flex min-w-0 items-center gap-2 shrink-0
           "
         >
           {isLoading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Enviando...</span>
+              <span>Sending...</span>
             </>
           ) : (
             <>
               <Send className="w-4 h-4" />
-              <span>Enviar</span>
+              <span>Send</span>
             </>
           )}
         </button>

@@ -20,7 +20,7 @@ export default function AdvancedSettings({ headers, onHeadersChange }: AdvancedS
       >
         <div className="flex items-center gap-2">
           <Settings2 className="w-4 h-4 text-dracula-comment" />
-          <span className="text-sm font-medium text-dracula-fg">Configurações Avançadas</span>
+          <span className="text-sm font-medium text-dracula-fg">Advanced settings</span>
           <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-dracula-card text-dracula-comment font-mono">
             {headers.filter(h => h.enabled).length} headers
           </span>

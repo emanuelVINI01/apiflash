@@ -1,28 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://apiflash.emanuelvini.dev"),
-  title: "apiFlash — Cliente HTTP Minimalista",
-  description: "Teste endpoints REST rapidamente, direto no navegador. Sem configuração.",
+  title: "apiFlash - Mobile HTTP Workbench",
+  description: "Mobile-first Dracula HTTP client for endpoint testing, reusable collections, local history and response inspection.",
   openGraph: {
-    title: "apiFlash — Cliente HTTP Minimalista",
-    description: "Cliente HTTP dark para testar endpoints REST direto no navegador.",
+    title: "apiFlash - Mobile HTTP Workbench",
+    description: "Dark HTTP workbench for testing REST endpoints directly in the browser.",
     url: "https://apiflash.emanuelvini.dev",
     siteName: "apiFlash",
     type: "website",
-    locale: "pt_BR",
+    locale: "en_US",
   },
 };
 
@@ -34,7 +23,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
