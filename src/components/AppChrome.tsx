@@ -3,19 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { BookOpenText, History, Home, Library, Zap } from "lucide-react";
+import { BookOpenText, History, Home, Library } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+import ApiFlashLogo from "@/components/ApiFlashLogo";
 import Footer from "@/components/Footer";
-
-const navItems = [
-  { href: "/", label: "Workbench", icon: Home },
-  { href: "/collections", label: "Collections", icon: Library },
-  { href: "/history", label: "History", icon: History },
-  { href: "/docs", label: "Docs", icon: BookOpenText },
-];
+import LanguageToggle from "@/components/LanguageToggle";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { t } = useLanguage();
+  const navItems = [
+    { href: "/", label: t.common.workbench, icon: Home },
+    { href: "/collections", label: t.common.collections, icon: Library },
+    { href: "/history", label: t.common.history, icon: History },
+    { href: "/docs", label: t.common.docs, icon: BookOpenText },
+  ];
 
   return (
     <div className="min-h-screen bg-dracula-bg text-dracula-fg">
@@ -27,16 +30,13 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
       >
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
           <Link href="/" className="group flex min-w-0 items-center gap-2.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-dracula-cyan/40 bg-dracula-cyan/10 shadow-[0_0_20px_rgba(139,233,253,0.18)] transition-colors group-hover:border-dracula-purple/50">
-              <Zap className="h-4.5 w-4.5 fill-dracula-cyan text-dracula-cyan" />
-            </span>
-            <span className="min-w-0 truncate text-sm font-semibold tracking-tight text-dracula-fg">
-              api<span className="text-dracula-cyan">Flash</span>
-              <span className="hidden text-dracula-comment sm:inline"> / HTTP workbench</span>
+            <ApiFlashLogo markClassName="h-9 w-9 transition-colors group-hover:border-dracula-purple/50" />
+            <span className="hidden min-w-0 truncate text-sm text-dracula-comment sm:inline">
+              / {t.nav.subtitle}
             </span>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-5">
+          <div className="flex items-center gap-2 sm:gap-4">
             <nav className="hidden items-center gap-5 md:flex">
               {navItems.map(({ href, label }) => {
                 const isActive = pathname === href;
@@ -63,13 +63,14 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
               })}
             </nav>
 
+            <LanguageToggle />
             <a
               href="https://github.com/emanuelVINI01/api-flash"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-dracula-cyan/25 bg-dracula-cyan/10 px-2.5 text-xs font-semibold uppercase tracking-widest text-dracula-cyan transition-colors hover:border-dracula-cyan/60 hover:bg-dracula-cyan/15 sm:px-3"
             >
-              <span className="hidden sm:inline">GitHub</span>
+              <span className="hidden sm:inline">{t.common.github}</span>
               <FaGithub className="h-3.5 w-3.5" />
             </a>
           </div>

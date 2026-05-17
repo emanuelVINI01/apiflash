@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://apiflash.emanuelvini.dev"),
-  title: "apiFlash - Mobile HTTP Workbench",
-  description: "Mobile-first Dracula HTTP client for endpoint testing, reusable collections, local history and response inspection.",
+  title: "apiFlash - HTTP Workbench",
+  description: "Mobile-first HTTP workbench for endpoint testing, reusable collections, local history and response inspection.",
   openGraph: {
-    title: "apiFlash - Mobile HTTP Workbench",
-    description: "Dark HTTP workbench for testing REST endpoints directly in the browser.",
+    title: "apiFlash - HTTP Workbench",
+    description: "Focused HTTP workbench for testing REST endpoints directly in the browser.",
     url: "https://apiflash.emanuelvini.dev",
     siteName: "apiFlash",
     type: "website",
-    locale: "en_US",
+    locale: "pt_BR",
+    images: [
+      {
+        url: "/apiflash-logo.svg",
+        width: 256,
+        height: 256,
+        alt: "apiFlash logo",
+      },
+    ],
   },
 };
 
@@ -22,10 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       className="h-full antialiased"
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

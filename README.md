@@ -1,60 +1,34 @@
 # apiFlash
 
-apiFlash is a mobile-first HTTP workbench for testing REST endpoints directly from the browser. It focuses on the fast loop developers use every day: choose a method, enter a URL, add headers, format a JSON body, send the request and inspect the response.
+apiFlash is a mobile-first HTTP workbench for testing REST endpoints directly from the browser. It focuses on the fast loop used every day: choose a method, enter a URL, add params, auth, headers and body, send the request and inspect the response.
 
 ## Short Description
 
-Dracula-themed HTTP client built with Next.js, Framer Motion and Tailwind CSS. It includes a responsive request workbench, response inspector, reusable collections, browser-side request history and product documentation pages.
+HTTP client with a responsive request workbench, response inspector, reusable collections, browser-side request history and product documentation pages.
 
 ## Features
 
-- Method selector for `GET`, `POST`, `PUT`, `PATCH` and `DELETE`.
+- Method selector for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD` and `OPTIONS`.
 - URL input with automatic `https://` normalization.
+- Query parameter editor with enabled/disabled rows.
+- Auth helpers for bearer token, basic auth and API key.
 - Header editor with enabled/disabled rows.
-- JSON body editor with validation, formatting and preview mode.
-- Server-side proxy route to reduce browser CORS friction.
-- Response viewer with status, duration, body, headers, syntax highlighting and copy action.
+- JSON, text and form URL encoded body modes.
+- JSON body validation, formatting and preview.
+- Timeout and redirect controls.
+- Generated cURL preview for the current request.
+- Server-side request proxy to reduce browser CORS friction.
+- Response viewer with status, duration, body, headers and copy action.
 - Local browser history for successful requests.
-- Collections page with reusable endpoint recipes.
-- Docs page explaining request lifecycle and safety constraints.
-- Mobile bottom navigation, responsive footer and Dracula theme.
-- Framer Motion animations across hero, cards and workbench sections.
-
-## Tech Stack
-
-- Next.js 16 App Router
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- Framer Motion
-- Lucide React
-- React Syntax Highlighter
+- Persistent local collections with saved requests that can be run again.
+- Language toggle for Portuguese and English.
 
 ## Pages
 
 - `/` - main HTTP workbench.
-- `/collections` - reusable request recipes and templates.
+- `/collections` - local collections with saved requests.
 - `/history` - local request history saved in `localStorage`.
 - `/docs` - request lifecycle, proxy behavior and safety notes.
-
-## Project Structure
-
-```txt
-app/
-  api/proxy/route.ts
-  collections/page.tsx
-  docs/page.tsx
-  history/page.tsx
-  page.tsx
-src/components/
-  AdvancedSettings.tsx
-  AppChrome.tsx
-  Footer.tsx
-  HeadersEditor.tsx
-  RequestBar.tsx
-  RequestBodyEditor.tsx
-  ResponseViewer.tsx
-```
 
 ## Running Locally
 
@@ -65,15 +39,6 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## Scripts
-
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-```
-
 ## Proxy Behavior
 
 The UI sends requests to `POST /api/proxy`. The proxy receives:
@@ -82,12 +47,14 @@ The UI sends requests to `POST /api/proxy`. The proxy receives:
 - `method`
 - `headers`
 - optional `body`
+- optional `timeoutMs`
+- optional `followRedirects`
 
 The server route performs the outbound request and returns normalized response metadata to the UI. This keeps the browser interface simple and avoids many CORS limitations that appear when calling third-party APIs directly from the client.
 
 ## Safety Notes
 
-apiFlash does not persist secrets. Local history stores only method, URL, status, status text, duration and timestamp. Avoid sending production credentials through a public demo deployment unless you control the environment.
+apiFlash does not send local history or collections to an external account. Data saved in history and collections stays in the current browser. Avoid saving production credentials in a public demo deployment unless you control the environment.
 
 ## License
 

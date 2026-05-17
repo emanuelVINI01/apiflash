@@ -1,13 +1,10 @@
-'use client';
+"use client";
 
-import { Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from "@/context/LanguageContext";
+import type { HeaderRow } from "@/lib/request-model";
+import KeyValueRowsEditor from "./KeyValueRowsEditor";
 
-export interface HeaderRow {
-  id: string;
-  key: string;
-  value: string;
-  enabled: boolean;
-}
+export type { HeaderRow };
 
 interface HeadersEditorProps {
   headers: HeaderRow[];
@@ -15,84 +12,19 @@ interface HeadersEditorProps {
 }
 
 export default function HeadersEditor({ headers, onChange }: HeadersEditorProps) {
-  const addHeader = () => {
-    const newHeader: HeaderRow = {
-      id: Math.random().toString(36).substring(7),
-      key: '',
-      value: '',
-      enabled: true,
-    };
-    onChange([...headers, newHeader]);
-  };
-
-  const removeHeader = (id: string) => {
-    onChange(headers.filter((h) => h.id !== id));
-  };
-
-  const updateHeader = (id: string, updates: Partial<HeaderRow>) => {
-    onChange(
-      headers.map((h) => (h.id === id ? { ...h, ...updates } : h))
-    );
-  };
+  const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="mb-1 flex min-w-0 items-center justify-between gap-3">
-        <h3 className="text-xs font-semibold text-dracula-comment uppercase tracking-wider">
-          Request headers
-        </h3>
-        <button
-          onClick={addHeader}
-          type="button"
-          className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-dracula-cyan transition-colors hover:text-dracula-cyan/80"
-        >
-          <Plus className="w-3 h-3" />
-          Add header
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {headers.length === 0 ? (
-          <p className="text-xs text-dracula-comment italic py-2">
-            No custom headers added yet.
-          </p>
-        ) : (
-          headers.map((header) => (
-            <div key={header.id} className="flex min-w-0 items-start gap-2 animate-in fade-in slide-in-from-left-2 duration-200 sm:items-center">
-              <input
-                type="checkbox"
-                checked={header.enabled}
-                onChange={(e) => updateHeader(header.id, { enabled: e.target.checked })}
-                className="mt-2 h-4 w-4 rounded border-dracula-card bg-dracula-bg text-dracula-purple focus:ring-dracula-purple/50 focus:ring-offset-0 sm:mt-0"
-              />
-              <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
-                <input
-                  type="text"
-                  value={header.key}
-                  onChange={(e) => updateHeader(header.id, { key: e.target.value })}
-                  placeholder="Key (ex: Authorization)"
-                  className="h-9 min-w-0 rounded-lg border border-dracula-card bg-dracula-bg px-3 font-mono text-xs text-dracula-fg placeholder-dracula-comment transition-all focus:border-dracula-purple focus:outline-none"
-                />
-                <input
-                  type="text"
-                  value={header.value}
-                  onChange={(e) => updateHeader(header.id, { value: e.target.value })}
-                  placeholder="Value"
-                  className="h-9 min-w-0 rounded-lg border border-dracula-card bg-dracula-bg px-3 font-mono text-xs text-dracula-fg placeholder-dracula-comment transition-all focus:border-dracula-purple focus:outline-none"
-                />
-              </div>
-              <button
-                onClick={() => removeHeader(header.id)}
-                type="button"
-                className="p-2 text-dracula-comment hover:text-dracula-red transition-colors"
-                title="Remove header"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
+    <KeyValueRowsEditor
+      rows={headers}
+      onChange={onChange}
+      title={t.request.headers.title}
+      addLabel={t.request.headers.add}
+      emptyLabel={t.request.headers.empty}
+      keyPlaceholder={t.request.headers.keyPlaceholder}
+      valuePlaceholder={t.request.headers.valuePlaceholder}
+      removeLabel={t.request.headers.remove}
+      idPrefix="header"
+    />
   );
 }

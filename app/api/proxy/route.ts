@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { BODY_METHODS, HTTP_METHODS } from '@/lib/request-model';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -38,29 +39,41 @@ export function OPTIONS() {
 }
 
 export async function POST(req: NextRequest) {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+
   try {
-    const { url, method, headers, body } = await req.json();
+    const { url, method = 'GET', headers, body, timeoutMs = 30000, followRedirects = true } = await req.json();
 
     if (!url) {
       return jsonWithCors({ error: 'URL is required' }, 400);
     }
 
+    try {
+      new URL(url);
+    } catch {
+      return jsonWithCors({ error: 'Invalid URL' }, 400);
+    }
+
+    const safeMethod = (HTTP_METHODS as readonly string[]).includes(method) ? method : 'GET';
+    const safeTimeout = Math.min(Math.max(Number(timeoutMs) || 30000, 1000), 120000);
+    const controller = new AbortController();
+    timeout = setTimeout(() => controller.abort(), safeTimeout);
     const start = performance.now();
 
-    // Create the fetch options, filtering out headers that might cause issues
     const fetchHeaders = new Headers();
     Object.entries(headers || {}).forEach(([key, value]) => {
-      // Avoid passing host and other restricted headers if they exist
-      if (!BLOCKED_REQUEST_HEADERS.has(key.toLowerCase())) {
+      if (!BLOCKED_REQUEST_HEADERS.has(key.toLowerCase()) && typeof value === 'string') {
         fetchHeaders.append(key, value as string);
       }
     });
 
     const response = await fetch(url, {
-      method: method || 'GET',
+      method: safeMethod,
       headers: fetchHeaders,
-      body: ['POST', 'PUT', 'PATCH'].includes(method) ? body : undefined,
+      body: (BODY_METHODS as readonly string[]).includes(safeMethod) ? body : undefined,
       cache: 'no-store',
+      redirect: followRedirects ? 'follow' : 'manual',
+      signal: controller.signal,
     });
 
     const duration = Math.round(performance.now() - start);
@@ -71,13 +84,16 @@ export async function POST(req: NextRequest) {
       responseHeaders[k] = v;
     });
 
-    let responseBody: unknown;
     const contentType = response.headers.get('content-type') || '';
+    const text = await response.text();
+    let responseBody: unknown = text;
 
-    if (contentType.includes('application/json')) {
-      responseBody = await response.json();
-    } else {
-      responseBody = await response.text();
+    if (contentType.includes('application/json') && text) {
+      try {
+        responseBody = JSON.parse(text);
+      } catch {
+        responseBody = text;
+      }
     }
 
     return jsonWithCors({
@@ -89,7 +105,14 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     console.error('Proxy error:', error);
-    const message = error instanceof Error ? error.message : 'Error occurred while fetching';
+    const message =
+      error instanceof Error && error.name === 'AbortError'
+        ? 'Request timed out'
+        : error instanceof Error
+          ? error.message
+          : 'Error occurred while fetching';
     return jsonWithCors({ error: message }, 500);
+  } finally {
+    if (timeout) clearTimeout(timeout);
   }
 }

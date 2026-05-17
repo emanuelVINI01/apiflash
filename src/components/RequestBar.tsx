@@ -1,24 +1,34 @@
-'use client';
+"use client";
 
-import type { FormEvent } from 'react';
-import { Send, Loader2 } from 'lucide-react';
-import type { HeaderRow } from './HeadersEditor';
+import type { FormEvent } from "react";
+import { ChevronDown, Loader2, Send } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import {
+  HTTP_METHODS,
+  applyQueryParams,
+  buildHeaders,
+  canSendBody,
+  normalizeUrl,
+  type AuthConfig,
+  type BodyType,
+  type HeaderRow,
+  type HttpMethod,
+  type QueryParamRow,
+  type RequestOptions,
+  type ResponseData,
+} from "@/lib/request-model";
 
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-
-export interface ResponseData {
-  status: number;
-  statusText: string;
-  body: unknown;
-  headers: Record<string, string>;
-  duration: number;
-}
+export type { HttpMethod, ResponseData };
 
 interface RequestBarProps {
   method: HttpMethod;
   url: string;
   headers: HeaderRow[];
+  queryParams: QueryParamRow[];
+  auth: AuthConfig;
   body: string;
+  bodyType: BodyType;
+  options: RequestOptions;
   onMethodChange: (method: HttpMethod) => void;
   onUrlChange: (url: string) => void;
   onResponse: (data: ResponseData) => void;
@@ -28,20 +38,24 @@ interface RequestBarProps {
 }
 
 const METHOD_COLORS: Record<HttpMethod, string> = {
-  GET: 'text-dracula-cyan',
-  POST: 'text-dracula-green',
-  PUT: 'text-dracula-orange',
-  DELETE: 'text-dracula-red',
-  PATCH: 'text-dracula-purple',
+  GET: "text-dracula-cyan",
+  POST: "text-dracula-green",
+  PUT: "text-dracula-orange",
+  PATCH: "text-dracula-purple",
+  DELETE: "text-dracula-red",
+  HEAD: "text-dracula-yellow",
+  OPTIONS: "text-dracula-pink",
 };
-
-const HTTP_METHODS: HttpMethod[] = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
 export default function RequestBar({
   method,
   url,
   headers,
+  queryParams,
+  auth,
   body,
+  bodyType,
+  options,
   onMethodChange,
   onUrlChange,
   onResponse,
@@ -49,47 +63,42 @@ export default function RequestBar({
   isLoading,
   setIsLoading,
 }: RequestBarProps) {
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const { t } = useLanguage();
 
-    const trimmed = url.trim();
-    if (!trimmed) {
-      onError('Enter a valid URL before sending.');
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    const normalizedUrl = normalizeUrl(url);
+    if (!normalizedUrl) {
+      onError(t.request.validUrlError);
       return;
     }
 
-    // Validate URL
     try {
-      new URL(trimmed.startsWith('http') ? trimmed : `https://${trimmed}`);
+      new URL(normalizedUrl);
     } catch {
-      onError('Invalid URL. Check the format, for example https://api.example.com/endpoint.');
+      onError(t.request.invalidUrlError);
       return;
     }
-
-    const finalUrl = trimmed.startsWith('http') ? trimmed : `https://${trimmed}`;
 
     setIsLoading(true);
     try {
-      const customHeaders: Record<string, string> = {};
-      headers.forEach((h) => {
-        if (h.enabled && h.key && h.value) {
-          customHeaders[h.key] = h.value;
-        }
-      });
+      const hasBody = canSendBody(method) && body.trim().length > 0;
+      const finalUrl = applyQueryParams(normalizedUrl, queryParams, auth);
+      const requestHeaders = buildHeaders(headers, auth, bodyType, hasBody);
 
       const proxyBody = {
         url: finalUrl,
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          ...customHeaders,
-        },
-        body: ['POST', 'PUT', 'PATCH'].includes(method) && body.trim() ? body : undefined,
+        headers: requestHeaders,
+        body: hasBody ? body : undefined,
+        timeoutMs: options.timeoutMs,
+        followRedirects: options.followRedirects,
       };
 
-      const response = await fetch('/api/proxy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/proxy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(proxyBody),
       });
 
@@ -100,12 +109,12 @@ export default function RequestBar({
 
       const proxyData: ResponseData = await response.json();
       onResponse(proxyData);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error.';
-      if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
-        onError('Could not connect to the server. Check the URL and your connection.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t.request.unknownError;
+      if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        onError(t.request.connectionError);
       } else {
-        onError(`Request error: ${msg}`);
+        onError(`${t.request.requestError}: ${message}`);
       }
     } finally {
       setIsLoading(false);
@@ -115,71 +124,47 @@ export default function RequestBar({
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div className="flex min-w-0 flex-col gap-3 sm:flex-row">
-        {/* Method Select */}
         <div className="relative min-w-0 shrink-0">
           <select
             value={method}
-            onChange={(e) => onMethodChange(e.target.value as HttpMethod)}
+            onChange={(event) => onMethodChange(event.target.value as HttpMethod)}
             disabled={isLoading}
-            className={`
-              h-12 w-full pl-4 pr-8 rounded-xl border border-dracula-card bg-dracula-card sm:w-auto
-              font-mono font-bold text-sm appearance-none cursor-pointer
-              focus:outline-none focus:border-dracula-purple focus:ring-1 focus:ring-dracula-purple/50
-              transition-all duration-200 disabled:opacity-50
-              ${METHOD_COLORS[method]}
-            `}
+            className={`h-12 w-full cursor-pointer appearance-none rounded-xl border border-dracula-card bg-dracula-card pl-4 pr-8 font-mono text-sm font-bold transition-all duration-200 focus:border-dracula-purple focus:outline-none focus:ring-1 focus:ring-dracula-purple/50 disabled:opacity-50 sm:w-auto ${METHOD_COLORS[method]}`}
           >
-            {HTTP_METHODS.map((m) => (
-              <option key={m} value={m} className="bg-dracula-bg text-dracula-fg">
-                {m}
+            {HTTP_METHODS.map((httpMethod) => (
+              <option key={httpMethod} value={httpMethod} className="bg-dracula-bg text-dracula-fg">
+                {httpMethod}
               </option>
             ))}
           </select>
-          {/* Custom arrow */}
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <svg className="w-4 h-4 text-dracula-comment" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <ChevronDown className="h-4 w-4 text-dracula-comment" />
           </div>
         </div>
 
-        {/* URL Input */}
         <input
           type="text"
           value={url}
-          onChange={(e) => onUrlChange(e.target.value)}
-          placeholder="https://api.example.com/v1/users"
+          onChange={(event) => onUrlChange(event.target.value)}
+          placeholder={t.request.urlPlaceholder}
           disabled={isLoading}
-          className="
-            min-w-0 flex-1 h-12 px-4 rounded-xl border border-dracula-card bg-dracula-card
-            text-dracula-fg placeholder-dracula-comment font-mono text-sm
-            focus:outline-none focus:border-dracula-purple focus:ring-1 focus:ring-dracula-purple/50
-            hover:border-dracula-comment transition-all duration-200 disabled:opacity-50
-          "
+          className="h-12 min-w-0 flex-1 rounded-xl border border-dracula-card bg-dracula-card px-4 font-mono text-sm text-dracula-fg placeholder-dracula-comment transition-all duration-200 hover:border-dracula-comment focus:border-dracula-purple focus:outline-none focus:ring-1 focus:ring-dracula-purple/50 disabled:opacity-50"
         />
 
-        {/* Send Button */}
         <button
           type="submit"
           disabled={isLoading || !url.trim()}
-          className="
-            h-12 justify-center rounded-xl px-6 text-sm font-semibold
-            bg-dracula-purple text-dracula-bg
-            hover:opacity-90 active:scale-95
-            focus:outline-none focus:ring-2 focus:ring-dracula-purple/50
-            disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100
-            transition-all duration-200 flex min-w-0 items-center gap-2 shrink-0
-          "
+          className="flex h-12 min-w-0 shrink-0 items-center justify-center gap-2 rounded-xl bg-dracula-purple px-6 text-sm font-semibold text-dracula-bg transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-dracula-purple/50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Sending...</span>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>{t.request.sending}</span>
             </>
           ) : (
             <>
-              <Send className="w-4 h-4" />
-              <span>Send</span>
+              <Send className="h-4 w-4" />
+              <span>{t.request.send}</span>
             </>
           )}
         </button>
