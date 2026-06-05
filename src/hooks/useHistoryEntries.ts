@@ -29,7 +29,7 @@ export function useHistoryEntries() {
           options: DEFAULT_REQUEST_OPTIONS,
         })
     );
-    window.location.assign("/#workbench");
+    window.location.assign("/workspace#workbench");
   };
 
   return {

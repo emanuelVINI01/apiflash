@@ -1,71 +1,33 @@
+import type {
+  AuthConfig,
+  BodyType,
+  HeaderRow,
+  HttpMethod,
+  KeyValueRow,
+  QueryParamRow,
+  RequestDraft,
+  RequestOptions,
+} from "@/types/request";
+
+export type {
+  ApiKeyLocation,
+  AuthConfig,
+  AuthType,
+  BodyType,
+  HeaderRow,
+  HttpMethod,
+  KeyValueRow,
+  QueryParamRow,
+  RequestCollection,
+  RequestDraft,
+  RequestOptions,
+  ResponseData,
+  SavedRequest,
+} from "@/types/request";
+
 export const HTTP_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"] as const;
 export const BODY_METHODS = ["POST", "PUT", "PATCH"] as const;
 export const BODY_TYPES = ["json", "text", "form"] as const;
-
-export type HttpMethod = (typeof HTTP_METHODS)[number];
-export type BodyType = (typeof BODY_TYPES)[number];
-export type AuthType = "none" | "bearer" | "basic" | "apiKey";
-export type ApiKeyLocation = "header" | "query";
-
-export interface KeyValueRow {
-  id: string;
-  key: string;
-  value: string;
-  enabled: boolean;
-}
-
-export type HeaderRow = KeyValueRow;
-export type QueryParamRow = KeyValueRow;
-
-export interface AuthConfig {
-  type: AuthType;
-  token: string;
-  username: string;
-  password: string;
-  apiKeyName: string;
-  apiKeyValue: string;
-  apiKeyLocation: ApiKeyLocation;
-}
-
-export interface RequestOptions {
-  timeoutMs: number;
-  followRedirects: boolean;
-}
-
-export interface RequestDraft {
-  method: HttpMethod;
-  url: string;
-  headers: HeaderRow[];
-  queryParams: QueryParamRow[];
-  auth: AuthConfig;
-  body: string;
-  bodyType: BodyType;
-  options: RequestOptions;
-}
-
-export interface ResponseData {
-  status: number;
-  statusText: string;
-  body: unknown;
-  headers: Record<string, string>;
-  duration: number;
-}
-
-export interface SavedRequest extends RequestDraft {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface RequestCollection {
-  id: string;
-  name: string;
-  description: string;
-  requests: SavedRequest[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 export const DEFAULT_AUTH: AuthConfig = {
   type: "none",

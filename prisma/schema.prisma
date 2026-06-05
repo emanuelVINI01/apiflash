@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String              @id @default(cuid())
+  name          String?
+  email         String?             @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  collections   RequestCollection[]
+  aiUsageEvents AiUsageEvent[]
+  proxyLogs     ProxyRequestLog[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model RequestCollection {
+  id          String         @id @default(cuid())
+  name        String
+  description String         @default("")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requests    SavedRequest[]
+
+  @@index([userId, updatedAt])
+}
+
+model SavedRequest {
+  id           String            @id @default(cuid())
+  name         String
+  method       String
+  url          String
+  headers      Json
+  queryParams  Json
+  auth         Json
+  body         String            @db.Text
+  bodyType     String
+  options      Json
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  collectionId String
+  collection   RequestCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@index([collectionId, updatedAt])
+}
+
+model AiFlashAnalysis {
+  id          String         @id @default(cuid())
+  reqHash     String         @unique // SHA-256 hash of URL + METHOD + HEADERS + BODY
+  model       String
+  result      Json           // Analysis results (TS type definition, friendly description, security review)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  usageEvents AiUsageEvent[]
+}
+
+model AiUsageEvent {
+  id        String           @id @default(cuid())
+  userId    String
+  reqHash   String?
+  model     String
+  cacheHit  Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysis  AiFlashAnalysis? @relation(fields: [reqHash], references: [reqHash], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([reqHash])
+}
+
+model ProxyRequestLog {
+  id               String   @id @default(cuid())
+  userId           String?
+  method           String
+  url              String
+  requestHeaders   Json?
+  responseStatus   Int
+  responseDuration Int
+  responseSize     Int
+  createdAt        DateTime @default(now())
+
+  user             User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}

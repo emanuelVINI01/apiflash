@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Play, Trash2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { methodClass } from "@/lib/request-style";
+import { methodClass } from "@/utils/request-display";
 import type { RequestCollection, SavedRequest } from "@/lib/request-model";
 
 interface CollectionCardProps {

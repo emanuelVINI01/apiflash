@@ -9,7 +9,8 @@ import { useLanguage } from "@/context/LanguageContext";
 export default function Footer() {
   const { t } = useLanguage();
   const footerLinks = [
-    { label: t.common.workbench, href: "/" },
+    { label: t.common.home, href: "/" },
+    { label: t.common.workbench, href: "/workspace" },
     { label: t.common.collections, href: "/collections" },
     { label: t.common.history, href: "/history" },
     { label: t.common.docs, href: "/docs" },

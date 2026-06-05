@@ -5,10 +5,12 @@ import Providers from "@/components/Providers";
 export const metadata: Metadata = {
   metadataBase: new URL("https://apiflash.emanuelvini.dev"),
   title: "apiFlash - HTTP Workbench",
-  description: "Mobile-first HTTP workbench for endpoint testing, reusable collections, local history and response inspection.",
+  description:
+    "HTTP workbench for testing APIs, inspecting responses and saving authenticated request collections.",
   openGraph: {
     title: "apiFlash - HTTP Workbench",
-    description: "Focused HTTP workbench for testing REST endpoints directly in the browser.",
+    description:
+      "Test APIs, inspect responses and persist reusable request collections after GitHub login.",
     url: "https://apiflash.emanuelvini.dev",
     siteName: "apiFlash",
     type: "website",

@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  createSavedRequest,
-  readCollections,
-  writeCollections,
-} from "@/lib/collection-storage";
+import { useSession } from "next-auth/react";
 import { normalizeDraft, type RequestCollection, type RequestDraft } from "@/lib/request-model";
+import { createRemoteRequest, fetchCollections } from "@/services/collections-client";
 
 function defaultRequestName(draft: RequestDraft) {
   const normalized = normalizeDraft(draft);
@@ -19,34 +16,60 @@ export function useSaveToCollection(draft: RequestDraft) {
   const [collectionId, setCollectionId] = useState("");
   const [requestName, setRequestName] = useState("");
   const [saved, setSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
+  const { status } = useSession();
   const suggestedName = useMemo(() => defaultRequestName(draft), [draft]);
 
   useEffect(() => {
-    queueMicrotask(() => {
-      const nextCollections = readCollections();
-      setCollections(nextCollections);
-      setCollectionId((current) => current || nextCollections[0]?.id || "");
-    });
-  }, []);
+    if (status !== "authenticated") {
+      setCollections([]);
+      setCollectionId("");
+      return;
+    }
 
-  const saveRequest = () => {
+    let active = true;
+    fetchCollections()
+      .then((nextCollections) => {
+        if (!active) return;
+        setCollections(nextCollections);
+        setCollectionId((current) => current || nextCollections[0]?.id || "");
+      })
+      .catch((requestError: unknown) => {
+        if (active) setError(requestError instanceof Error ? requestError.message : "Failed to load collections.");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [status]);
+
+  const saveRequest = async () => {
     if (!collectionId || !draft.url.trim()) return;
 
-    const savedRequest = createSavedRequest(requestName || suggestedName, draft);
-    const updatedCollections = collections.map((collection) =>
-      collection.id === collectionId
-        ? {
-            ...collection,
-            requests: [savedRequest, ...collection.requests],
-            updatedAt: new Date().toISOString(),
-          }
-        : collection
-    );
+    setIsSaving(true);
+    setError("");
 
-    setCollections(updatedCollections);
-    writeCollections(updatedCollections);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1800);
+    try {
+      const savedRequest = await createRemoteRequest(collectionId, requestName || suggestedName, draft);
+      setCollections((currentCollections) =>
+        currentCollections.map((collection) =>
+          collection.id === collectionId
+            ? {
+                ...collection,
+                requests: [savedRequest, ...collection.requests],
+                updatedAt: new Date().toISOString(),
+              }
+            : collection,
+        )
+      );
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1800);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Failed to save request.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return {
@@ -54,6 +77,9 @@ export function useSaveToCollection(draft: RequestDraft) {
     collectionId,
     requestName,
     saved,
+    isAuthenticated: status === "authenticated",
+    isSaving,
+    error,
     suggestedName,
     setCollectionId,
     setRequestName,

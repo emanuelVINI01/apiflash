@@ -4,7 +4,7 @@ import { Settings2 } from "lucide-react";
 import AnimatedDisclosure from "@/components/AnimatedDisclosure";
 import { useLanguage } from "@/context/LanguageContext";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import type { AuthConfig, BodyType, HeaderRow, QueryParamRow, RequestOptions } from "@/lib/request-model";
+import { enabledRows, type AuthConfig, type BodyType, type HeaderRow, type QueryParamRow, type RequestOptions } from "@/lib/request-model";
 import AuthSettings from "./AuthSettings";
 import HeadersEditor from "./HeadersEditor";
 import QueryParamsEditor from "./QueryParamsEditor";
@@ -38,8 +38,8 @@ export default function AdvancedSettings({
   const { t } = useLanguage();
   const { isOpen, toggle } = useDisclosure(false);
 
-  const enabledHeaders = headers.filter((header) => header.enabled && header.key.trim()).length;
-  const enabledParams = queryParams.filter((param) => param.enabled && param.key.trim()).length;
+  const enabledHeaders = enabledRows(headers).length;
+  const enabledParams = enabledRows(queryParams).length;
   const authSummary = auth.type === "none" ? t.request.advanced.authNone : auth.type;
   const summary = (
     <div className="flex min-w-0 flex-wrap items-center gap-2">

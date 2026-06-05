@@ -1,6 +1,8 @@
 "use client";
 
-import { CheckCheck, Library, Save } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { CheckCheck, Library, Loader2, Save } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSaveToCollection } from "@/hooks/useSaveToCollection";
 import type { RequestDraft } from "@/lib/request-model";
@@ -16,6 +18,9 @@ export default function SaveToCollection({ draft }: SaveToCollectionProps) {
     collectionId,
     requestName,
     saved,
+    isAuthenticated,
+    isSaving,
+    error,
     suggestedName,
     setCollectionId,
     setRequestName,
@@ -31,7 +36,19 @@ export default function SaveToCollection({ draft }: SaveToCollectionProps) {
         </h3>
       </div>
 
-      {collections.length === 0 ? (
+      {!isAuthenticated ? (
+        <div className="grid gap-3">
+          <p className="text-sm leading-6 text-dracula-comment">{t.request.saveToCollection.loginRequired}</p>
+          <button
+            type="button"
+            onClick={() => signIn("github", { callbackUrl: "/workspace" })}
+            className="inline-flex h-10 w-fit items-center justify-center gap-2 rounded-lg bg-dracula-cyan px-4 text-sm font-semibold text-dracula-bg transition-opacity hover:opacity-90"
+          >
+            <FaGithub className="h-4 w-4" />
+            {t.common.login}
+          </button>
+        </div>
+      ) : collections.length === 0 ? (
         <p className="text-sm leading-6 text-dracula-comment">{t.request.saveToCollection.emptyCollections}</p>
       ) : (
         <div className="grid gap-2">
@@ -57,13 +74,14 @@ export default function SaveToCollection({ draft }: SaveToCollectionProps) {
             <button
               type="button"
               onClick={saveRequest}
-              disabled={!draft.url.trim() || !collectionId}
+              disabled={!draft.url.trim() || !collectionId || isSaving}
               className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-dracula-purple px-4 text-sm font-semibold text-dracula-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {saved ? <CheckCheck className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : saved ? <CheckCheck className="h-4 w-4" /> : <Save className="h-4 w-4" />}
               {saved ? t.request.saveToCollection.saved : t.request.saveToCollection.save}
             </button>
           </div>
+          {error && <p className="text-xs text-dracula-red">{error}</p>}
         </div>
       )}
     </div>

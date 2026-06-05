@@ -28,7 +28,7 @@ export default function CollectionsHeader() {
         </p>
       </div>
       <Link
-        href="/#workbench"
+        href="/workspace#workbench"
         className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-dracula-purple px-5 text-sm font-semibold text-dracula-bg shadow-lg shadow-dracula-purple/20"
       >
         {t.collectionsPage.openWorkbench}
