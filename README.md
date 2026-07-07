@@ -1,61 +1,54 @@
-# apiFlash
+# apiFlash - HTTP Workbench
 
-apiFlash is a mobile-first HTTP workbench for testing REST endpoints directly from the browser. It focuses on the fast loop used every day: choose a method, enter a URL, add params, auth, headers and body, send the request and inspect the response.
+apiFlash is a modern, fast, and secure HTTP workbench for testing and exploring APIs directly from your browser. It features AI-powered tools for generating requests, analyzing responses, and exporting client code.
 
-## Short Description
+## Architecture & Security
 
-HTTP client with a responsive request workbench, response inspector, reusable collections, browser-side request history and product documentation pages.
+This project follows a modular architecture built on **Next.js 14**, featuring:
+- **Clean Architecture** for the AI module (`src/modules/ai`), abstracting providers (Gemini), Quota Services, and Prompts.
+- **Robust SSRF Protection**: The internal proxy uses strict IP validation and DNS resolution to prevent attacks targeting localhost, loopback interfaces, or cloud metadata.
+- **Zod Validation**: All API routes validate incoming payloads securely.
+- **Structured Logging**: Using a custom JSON logger ready for Datadog or CloudWatch.
 
-## Features
+## Tech Stack
+- Next.js 14 (App Router)
+- React
+- Prisma (PostgreSQL)
+- Zod (Schema Validation)
+- Tailwind CSS
+- Vitest (Testing)
 
-- Method selector for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD` and `OPTIONS`.
-- URL input with automatic `https://` normalization.
-- Query parameter editor with enabled/disabled rows.
-- Auth helpers for bearer token, basic auth and API key.
-- Header editor with enabled/disabled rows.
-- JSON, text and form URL encoded body modes.
-- JSON body validation, formatting and preview.
-- Timeout and redirect controls.
-- Generated cURL preview for the current request.
-- Server-side request proxy to reduce browser CORS friction.
-- Response viewer with status, duration, body, headers and copy action.
-- Local browser history for successful requests.
-- Persistent local collections with saved requests that can be run again.
-- Language toggle for Portuguese and English.
+## Installation
 
-## Pages
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up your `.env` variables:
+   ```env
+   DATABASE_URL="postgresql://user:pass@localhost:5432/apiflash"
+   GEMINI_API_KEY="your-gemini-key"
+   NEXTAUTH_SECRET="your-secret"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
+4. Run migrations:
+   ```bash
+   npx prisma db push
+   ```
+5. Start development server:
+   ```bash
+   npm run dev
+   ```
 
-- `/` - main HTTP workbench.
-- `/collections` - local collections with saved requests.
-- `/history` - local request history saved in `localStorage`.
-- `/docs` - request lifecycle, proxy behavior and safety notes.
+## Commands
+- `npm run dev`: Start dev server
+- `npm run build`: Build for production
+- `npm run test`: Run Vitest tests
+- `npm run lint`: Run ESLint
 
-## Running Locally
-
+## Testing
+We use Vitest. To execute the test suite (which includes security validations against SSRF):
 ```bash
-npm install
-npm run dev
+npm run test
 ```
-
-Open `http://localhost:3000`.
-
-## Proxy Behavior
-
-The UI sends requests to `POST /api/proxy`. The proxy receives:
-
-- `url`
-- `method`
-- `headers`
-- optional `body`
-- optional `timeoutMs`
-- optional `followRedirects`
-
-The server route performs the outbound request and returns normalized response metadata to the UI. This keeps the browser interface simple and avoids many CORS limitations that appear when calling third-party APIs directly from the client.
-
-## Safety Notes
-
-apiFlash does not send local history or collections to an external account. Data saved in history and collections stays in the current browser. Avoid saving production credentials in a public demo deployment unless you control the environment.
-
-## License
-
-No open-source license is declared yet.

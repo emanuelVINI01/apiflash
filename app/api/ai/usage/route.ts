@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUserId } from "@/services/auth-server";
-import { aiServerService } from "@/services/ai-server";
+import { aiService } from "@/modules/ai";
 import { getErrorMessage } from "@/utils/error-message";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function GET() {
   }
 
   try {
-    const summary = await aiServerService.getUsageSummary(userId);
+    const summary = await aiService.getUsageSummary(userId);
     return NextResponse.json(summary);
   } catch (error: unknown) {
     return NextResponse.json({ error: getErrorMessage(error, "Failed to load usage") }, { status: 500 });

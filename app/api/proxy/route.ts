@@ -9,6 +9,18 @@ import {
 } from "@/services/proxy-server";
 import { requireUserId } from "@/services/auth-server";
 import { prisma } from "@/src/prisma";
+import { logger } from "@/shared/utils/logger";
+
+import { z } from "zod";
+
+const proxyPayloadSchema = z.object({
+  url: z.string().url(),
+  method: z.string().optional(),
+  headers: z.record(z.string(), z.unknown()).optional(),
+  body: z.string().optional(),
+  timeoutMs: z.number().min(1000).max(120000).optional(),
+  followRedirects: z.boolean().optional(),
+});
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,14 +43,17 @@ export async function POST(req: NextRequest) {
   const userId = await requireUserId();
 
   try {
-    const payload = (await req.json()) as ProxyRequestPayload;
+    const jsonBody = await req.json();
+    const parseResult = proxyPayloadSchema.safeParse(jsonBody);
 
-    if (!payload.url) {
-      return jsonWithCors({ error: "URL is required" }, 400);
+    if (!parseResult.success) {
+      return jsonWithCors({ error: "Invalid payload", details: parseResult.error.issues }, 400);
     }
 
-    if (!validateProxyUrl(payload.url)) {
-      return jsonWithCors({ error: "Invalid URL" }, 400);
+    const payload = parseResult.data as ProxyRequestPayload;
+
+    if (!(await validateProxyUrl(payload.url))) {
+      return jsonWithCors({ error: "Invalid URL or blocked by security policies" }, 400);
     }
 
     const result = await executeProxyRequest(payload);
@@ -47,23 +62,25 @@ export async function POST(req: NextRequest) {
     const bodyStr = typeof result.body === "string" ? result.body : JSON.stringify(result.body || "");
     const size = Buffer.byteLength(bodyStr, "utf8");
 
-    prisma.proxyRequestLog.create({
-      data: {
-        userId,
-        method: payload.method || "GET",
-        url: payload.url || "",
-        requestHeaders: payload.headers as Prisma.InputJsonValue | undefined,
-        responseStatus: result.status,
-        responseDuration: result.duration,
-        responseSize: size,
-      },
-    }).catch((dbErr) => {
-      console.error("Failed to save proxy log:", dbErr);
-    });
+    try {
+      await prisma.proxyRequestLog.create({
+        data: {
+          userId,
+          method: payload.method || "GET",
+          url: payload.url || "",
+          requestHeaders: payload.headers as Prisma.InputJsonValue | undefined,
+          responseStatus: result.status,
+          responseDuration: result.duration,
+          responseSize: size,
+        },
+      });
+    } catch (dbErr) {
+      logger.error({ error: dbErr, route: "/api/proxy" }, "Failed to save proxy log");
+    }
 
     return jsonWithCors(result);
   } catch (error: unknown) {
-    console.error("Proxy error:", error);
+    logger.error({ error, route: "/api/proxy" }, "Proxy error");
     return jsonWithCors({ error: formatProxyError(error) }, 500);
   }
 }

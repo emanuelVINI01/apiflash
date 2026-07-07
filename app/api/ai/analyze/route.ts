@@ -1,20 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUserId } from "@/services/auth-server";
-import { aiServerService } from "@/services/ai-server";
+import { aiService } from "@/modules/ai";
 import { getErrorMessage } from "@/utils/error-message";
+import { z } from "zod";
+
+const analyzeSchema = z.object({
+  method: z.string(),
+  url: z.string(),
+  responseStatus: z.number(),
+  requestHeaders: z.record(z.string(), z.string()).optional(),
+  requestBody: z.string().optional(),
+  responseHeaders: z.record(z.string(), z.string()).optional(),
+  responseBody: z.string().optional(),
+  locale: z.string().optional(),
+  forceRefresh: z.boolean().optional(),
+});
 
 export async function POST(request: NextRequest) {
-  const userId = await requireUserId();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const reqResData = await request.json();
-    const { locale, forceRefresh } = reqResData;
-    const lang = locale === "pt-BR" ? "pt-BR" : "en";
+    const userId = await requireUserId();
+    const jsonBody = await request.json();
+    const parseResult = analyzeSchema.safeParse(jsonBody);
 
-    const result = await aiServerService.analyzeResponse(
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "Invalid request payload", details: parseResult.error.issues }, { status: 400 });
+    }
+
+    const reqResData = parseResult.data;
+    const lang = reqResData.locale === "pt-BR" ? "pt-BR" : "en";
+
+    const result = await aiService.analyzeResponse(
       userId,
       {
         method: reqResData.method,

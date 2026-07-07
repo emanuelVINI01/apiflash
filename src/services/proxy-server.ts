@@ -37,14 +37,12 @@ export interface ProxyResponsePayload {
   duration: number;
 }
 
-export function validateProxyUrl(url: unknown): string | null {
+import { validateProxyUrlSecurity } from "@/security/proxy-security";
+
+export async function validateProxyUrl(url: unknown): Promise<string | null> {
   if (typeof url !== "string" || !url) return null;
 
-  try {
-    return new URL(url).toString();
-  } catch {
-    return null;
-  }
+  return await validateProxyUrlSecurity(url);
 }
 
 export function normalizeProxyMethod(method: unknown) {
@@ -91,8 +89,8 @@ export function collectResponseHeaders(response: Response) {
 }
 
 export async function executeProxyRequest(payload: ProxyRequestPayload): Promise<ProxyResponsePayload> {
-  const url = validateProxyUrl(payload.url);
-  if (!url) {
+  const initialUrl = await validateProxyUrl(payload.url);
+  if (!initialUrl) {
     throw new Error("Invalid URL");
   }
 
@@ -102,14 +100,36 @@ export async function executeProxyRequest(payload: ProxyRequestPayload): Promise
   const start = performance.now();
 
   try {
-    const response = await fetch(url, {
-      method,
-      headers: createProxyHeaders(payload.headers),
-      body: (BODY_METHODS as readonly string[]).includes(method) ? payload.body : undefined,
-      cache: "no-store",
-      redirect: payload.followRedirects === false ? "manual" : "follow",
-      signal: controller.signal,
-    });
+    let currentUrl = initialUrl;
+    let redirects = 0;
+    let response: Response;
+
+    while (true) {
+      response = await fetch(currentUrl, {
+        method,
+        headers: createProxyHeaders(payload.headers),
+        body: (BODY_METHODS as readonly string[]).includes(method) ? payload.body : undefined,
+        cache: "no-store",
+        redirect: "manual",
+        signal: controller.signal,
+      });
+
+      const isRedirect = response.status >= 300 && response.status < 400;
+      if (isRedirect && payload.followRedirects !== false && redirects < 5) {
+        const location = response.headers.get("location");
+        if (!location) break;
+        
+        const nextUrl = new URL(location, currentUrl).toString();
+        const validNextUrl = await validateProxyUrl(nextUrl);
+        if (!validNextUrl) {
+          throw new Error("Redirected to a blocked URL");
+        }
+        currentUrl = validNextUrl;
+        redirects++;
+        continue;
+      }
+      break;
+    }
 
     return {
       status: response.status,
