@@ -16,6 +16,9 @@ const codeSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const userId = await requireUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const jsonBody = await request.json();
     const parseResult = codeSchema.safeParse(jsonBody);
 

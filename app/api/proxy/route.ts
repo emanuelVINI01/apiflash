@@ -41,6 +41,9 @@ export function OPTIONS() {
 
 export async function POST(req: NextRequest) {
   const userId = await requireUserId();
+  if (!userId) {
+    return jsonWithCors({ error: "Unauthorized" }, 401);
+  }
 
   try {
     const jsonBody = await req.json();
