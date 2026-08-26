@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import {
   PROXY_CORS_HEADERS,
   executeProxyRequest,

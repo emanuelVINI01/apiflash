@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://apiflash.emanuelvini.dev"),
@@ -34,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className="h-full antialiased"
+      className={`h-full antialiased ${jetbrainsMono.variable}`}
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>

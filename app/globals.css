@@ -1,24 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-geist-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
-  --dracula-bg: #282a36;
-  --dracula-surface: #343746;
-  --dracula-card: #44475a;
-  --dracula-border: #44475a;
-  --dracula-fg: #f8f8f2;
-  --dracula-comment: #a7b0c8;
-  --dracula-cyan: #8be9fd;
+  /* Shared neutral ramp (apiFlash / snippetvault / simple-bank / typedash) */
+  --bg: #191a21;
+  --surface: #21222c;
+  --card: #282a36;
+  --card-hover: #2f3244;
+  --border: #44475a;
+  --border-soft: rgba(68, 71, 90, 0.5);
+  --fg: #f8f8f2;
+  --fg-muted: #a7b0c8;
+  --fg-subtle: #6c7086;
+
+  /* Shared semantic colors */
+  --success: #50fa7b;
+  --error: #ff5555;
+  --warning: #ffb86c;
+  --info: #8be9fd;
+
+  /* apiFlash accent: cyan (matches the lightning-bolt logo, same hex as --info) */
+  --accent: #8be9fd;
+
+  --font-geist-sans: var(--font-jetbrains-mono), "JetBrains Mono", "Fira Code", ui-monospace, "SFMono-Regular", Menlo,
+    Monaco, Consolas, monospace;
+  --font-geist-mono: var(--font-jetbrains-mono), "JetBrains Mono", "Fira Code", ui-monospace, "SFMono-Regular", Menlo,
+    Monaco, Consolas, monospace;
+
+  /* Legacy Dracula aliases kept for existing components; re-pointed at the neutral ramp */
+  --dracula-bg: var(--bg);
+  --dracula-surface: var(--surface);
+  --dracula-card: var(--border);
+  --dracula-border: var(--border);
+  --dracula-fg: var(--fg);
+  --dracula-comment: var(--fg-muted);
+  --dracula-cyan: var(--info);
   --dracula-purple: #bd93f9;
-  --dracula-green: #50fa7b;
+  --dracula-green: var(--success);
   --dracula-pink: #ff79c6;
   --dracula-yellow: #f1fa8c;
-  --dracula-orange: #ffb86c;
-  --dracula-red: #ff5555;
+  --dracula-orange: var(--warning);
+  --dracula-red: var(--error);
 }
 
 @theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-accent: var(--accent);
+
   --color-dracula-bg: var(--dracula-bg);
   --color-dracula-surface: var(--dracula-surface);
   --color-dracula-card: var(--dracula-card);
@@ -42,10 +81,33 @@ body {
   max-width: 100%;
   min-height: 100dvh;
   overflow-x: hidden;
-  background: var(--dracula-bg);
-  color: var(--dracula-fg);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-geist-sans, Arial, sans-serif);
+  font-weight: 500;
   position: relative;
+}
+
+:where(h1, h2, h3, h4) {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--fg-subtle);
+}
+
+.request-tag {
+  display: inline-block;
+  font-family: var(--font-geist-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--dracula-cyan);
 }
 
 html {
@@ -104,12 +166,12 @@ body::before {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--dracula-comment);
+  background: var(--dracula-cyan);
 }
 
 /* Selection */
 ::selection {
-  background: var(--dracula-purple);
+  background: var(--dracula-cyan);
   color: var(--dracula-bg);
 }
 
@@ -138,4 +200,26 @@ body::before {
   58%, 100% {
     transform: translateY(100%);
   }
+}
+
+/* Per-project visual identity: low-opacity HTTP-grid watermark for feature/content cards,
+   extending the .terminal-scan motif beyond the hero mock terminal. */
+.hud-watermark {
+  position: relative;
+  isolation: isolate;
+}
+
+.hud-watermark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image:
+    linear-gradient(rgba(139, 233, 253, 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 233, 253, 0.6) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(circle at top right, black, transparent 70%);
+  mask-image: radial-gradient(circle at top right, black, transparent 70%);
 }

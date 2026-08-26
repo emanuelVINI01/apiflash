@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { signOut, useSession } from "next-auth/react";
 import { LogIn, LogOut, UserCircle } from "lucide-react";
 import ApiFlashLogo from "@/components/ApiFlashLogo";
-import LanguageToggle from "@/components/LanguageToggle";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import DesktopNav from "./DesktopNav";
 import type { NavItem } from "./nav-items";
 
@@ -36,7 +36,7 @@ export default function AppHeader({ pathname, navItems, subtitle, loginLabel, lo
 
         <div className="flex items-center gap-2 sm:gap-4">
           <DesktopNav pathname={pathname} items={navItems} />
-          <LanguageToggle />
+          <LanguageSwitcher />
           {isAuthenticated ? (
             <button
               type="button"

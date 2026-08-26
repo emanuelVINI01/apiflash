@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/src/prisma";
 
 export class AiRepository {
@@ -22,14 +22,16 @@ export class AiRepository {
     return prisma.aiFlashAnalysis.delete({ where: { reqHash } });
   }
 
-  async createAnalysis(data: { reqHash: string; model: string; result: Prisma.InputJsonValue }) {
-    return prisma.aiFlashAnalysis.create({ data });
+  async createAnalysis(data: { reqHash: string; model: string; result: Record<string, unknown> }) {
+    return prisma.aiFlashAnalysis.create({
+      data: { ...data, result: data.result as Prisma.InputJsonValue },
+    });
   }
 
-  async updateAnalysis(reqHash: string, result: Prisma.InputJsonValue) {
+  async updateAnalysis(reqHash: string, result: Record<string, unknown>) {
     return prisma.aiFlashAnalysis.update({
       where: { reqHash },
-      data: { result },
+      data: { result: result as Prisma.InputJsonValue },
     });
   }
 

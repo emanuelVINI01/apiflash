@@ -93,17 +93,17 @@ export class AiService {
       let cached = forceRefresh ? null : await this.repository.getAnalysisByHash(reqHash);
 
       if (cached) {
-        if (this.repository.isPendingAnalysis(cached.result as Record<string, unknown>)) {
+        if (this.repository.isPendingAnalysis(cached.result)) {
           let attempts = 0;
           while (attempts < 10) {
             await new Promise((resolve) => setTimeout(resolve, 500));
             cached = await this.repository.getAnalysisByHash(reqHash);
-            if (!cached || !this.repository.isPendingAnalysis(cached.result as Record<string, unknown>)) break;
+            if (!cached || !this.repository.isPendingAnalysis(cached.result)) break;
             attempts++;
           }
         }
 
-        if (cached && !this.repository.isPendingAnalysis(cached.result as Record<string, unknown>)) {
+        if (cached && !this.repository.isPendingAnalysis(cached.result)) {
           await this.repository.recordUsageEvent({
             userId,
             cacheHit: true,
@@ -139,10 +139,10 @@ export class AiService {
           while (attempts < 10) {
             await new Promise((resolve) => setTimeout(resolve, 500));
             cached = await this.repository.getAnalysisByHash(reqHash);
-            if (!cached || !this.repository.isPendingAnalysis(cached.result as Record<string, unknown>)) break;
+            if (!cached || !this.repository.isPendingAnalysis(cached.result)) break;
             attempts++;
           }
-          if (cached && !this.repository.isPendingAnalysis(cached.result as Record<string, unknown>)) {
+          if (cached && !this.repository.isPendingAnalysis(cached.result)) {
             await this.repository.recordUsageEvent({
               userId,
               cacheHit: true,

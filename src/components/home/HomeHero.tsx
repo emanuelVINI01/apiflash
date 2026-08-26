@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Activity, ArrowRight, Clock3, Code2, RadioTower, Send, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, BookmarkCheck, Clock3, Code2, Database, Send, Zap } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { heroMonitorPreview } from "@/lib/monitoring-preview";
+import { savedRequestsPreview } from "@/lib/monitoring-preview";
 
 export default function HomeHero() {
   const { t } = useLanguage();
@@ -65,15 +65,15 @@ export default function HomeHero() {
               label: t.home.metrics.latency,
               value: t.home.metrics.ready,
               icon: Clock3,
-              color: "text-dracula-green",
+              color: "text-dracula-cyan",
             },
             {
               label: t.home.metrics.status,
               value: t.home.metrics.idle,
-              icon: ShieldCheck,
-              color: "text-dracula-cyan",
+              icon: Database,
+              color: "text-dracula-purple",
             },
-            { label: t.home.metrics.mode, value: "POST", icon: Activity, color: "text-dracula-red" },
+            { label: t.home.metrics.mode, value: "POST", icon: Send, color: "text-dracula-green" },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="rounded-2xl border border-dracula-card bg-dracula-bg/45 p-4">
               <div className="flex items-center justify-between">
@@ -93,21 +93,21 @@ export default function HomeHero() {
               </span>
             </div>
             <div className="mt-4 space-y-3">
-              {heroMonitorPreview.map(({ endpoint, stateKey, latency, colorClass }) => (
+              {savedRequestsPreview.map(({ endpoint, status, latency, colorClass }) => (
                 <div key={endpoint} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl bg-dracula-surface/45 px-3 py-2">
                   <span className={`h-2.5 w-2.5 rounded-full ${colorClass}`} />
                   <div>
-                    <p className="font-mono text-xs text-dracula-fg">{endpoint}</p>
-                    <p className="text-[10px] uppercase tracking-widest text-dracula-comment">{t.home.preview[stateKey]}</p>
+                    <p className="request-tag">{endpoint}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-dracula-comment">{status}</p>
                   </div>
                   <span className="font-mono text-xs text-dracula-comment">{latency}</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-2xl border border-dracula-red/30 bg-dracula-red/10 p-4">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-dracula-red">
-              <RadioTower className="h-4 w-4" />
+          <div className="rounded-2xl border border-dracula-cyan/25 bg-dracula-cyan/5 p-4">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-dracula-cyan">
+              <BookmarkCheck className="h-4 w-4" />
               {t.home.preview.activeIncident}
             </div>
             <p className="mt-3 text-sm font-semibold text-dracula-fg">{t.home.preview.incidentTitle}</p>

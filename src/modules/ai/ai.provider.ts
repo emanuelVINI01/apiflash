@@ -9,17 +9,22 @@ export interface IAiProvider {
 }
 
 export class GeminiProvider implements IAiProvider {
-  private ai: GoogleGenAI;
+  private ai?: GoogleGenAI;
   private modelName: string;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === "replace-with-gemini-api-key" || apiKey.startsWith("replace-with-")) {
-      throw new AiConfigurationError();
-    }
-    
-    this.ai = new GoogleGenAI({ apiKey });
     this.modelName = process.env.GEMINI_MODEL?.trim() || DEFAULT_GEMINI_MODEL;
+  }
+
+  private getClient(): GoogleGenAI {
+    if (!this.ai) {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey || apiKey === "replace-with-gemini-api-key" || apiKey.startsWith("replace-with-")) {
+        throw new AiConfigurationError();
+      }
+      this.ai = new GoogleGenAI({ apiKey });
+    }
+    return this.ai;
   }
 
   getModelName() {
@@ -27,7 +32,8 @@ export class GeminiProvider implements IAiProvider {
   }
 
   async generateObject(prompt: string, schema: Record<string, unknown>, temperature: number = 0.2): Promise<Record<string, unknown>> {
-    const response = await this.ai.models.generateContent({
+    const ai = this.getClient();
+    const response = await ai.models.generateContent({
       model: this.modelName,
       contents: prompt,
       config: {

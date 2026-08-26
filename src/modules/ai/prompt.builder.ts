@@ -30,7 +30,7 @@ export class PromptBuilder {
         `Corpo do Request: ${reqResData.requestBody}`,
         `Headers da Resposta: ${reqResData.responseHeaders}`,
         `Corpo da Resposta (Payload):`,
-        reqResData.responseBody.slice(0, 10000), // Limit size sent
+        String(reqResData.responseBody).slice(0, 10000), // Limit size sent
         "",
         "Tarefas do JSON:",
         "1. 'description': Explicação resumida do que o endpoint retornou.",
@@ -51,7 +51,7 @@ export class PromptBuilder {
       `Request Body: ${reqResData.requestBody}`,
       `Response Headers: ${reqResData.responseHeaders}`,
       `Response Body (Payload):`,
-      reqResData.responseBody.slice(0, 10000),
+      String(reqResData.responseBody).slice(0, 10000),
       "",
       "JSON Tasks:",
       "1. 'description': Brief explanation of what the payload represents.",

@@ -1,12 +1,16 @@
-export const heroMonitorPreview = [
-  { endpoint: "GET /v1/checkout", stateKey: "operational", latency: "99ms", colorClass: "bg-dracula-green" },
-  { endpoint: "POST /v1/webhooks", stateKey: "degraded", latency: "391ms", colorClass: "bg-dracula-yellow" },
-  { endpoint: "GET /health", stateKey: "operational", latency: "48ms", colorClass: "bg-dracula-cyan" },
+// Illustrative example values for the landing-page mock terminal / preview cards.
+// These are not live platform metrics — apiFlash is a request/response workbench,
+// not an uptime monitoring product.
+
+export const savedRequestsPreview = [
+  { endpoint: "GET /v1/checkout", status: "200 OK", latency: "99ms", colorClass: "bg-dracula-green" },
+  { endpoint: "POST /v1/webhooks", status: "429", latency: "391ms", colorClass: "bg-dracula-yellow" },
+  { endpoint: "GET /health", status: "200 OK", latency: "48ms", colorClass: "bg-dracula-cyan" },
 ] as const;
 
-export const regionHealthPreview = [
-  { label: "us-east", value: "99.99%", widthClass: "w-[96%]", colorClass: "bg-dracula-green" },
-  { label: "us-west", value: "99.97%", widthClass: "w-[91%]", colorClass: "bg-dracula-cyan" },
-  { label: "sa-east", value: "98.84%", widthClass: "w-[74%]", colorClass: "bg-dracula-yellow" },
-  { label: "eu-west", value: "99.95%", widthClass: "w-[88%]", colorClass: "bg-dracula-green" },
+export const savedFlowsPreview = [
+  { label: "checkout", value: "100%", widthClass: "w-full", colorClass: "bg-dracula-green" },
+  { label: "auth", value: "92%", widthClass: "w-[92%]", colorClass: "bg-dracula-cyan" },
+  { label: "webhooks", value: "78%", widthClass: "w-[78%]", colorClass: "bg-dracula-yellow" },
+  { label: "health", value: "100%", widthClass: "w-full", colorClass: "bg-dracula-green" },
 ] as const;

@@ -4,10 +4,11 @@ import Link from "next/link";
 import { ExternalLink, ShieldCheck, Sparkles } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import ApiFlashLogo from "@/components/ApiFlashLogo";
+import Flag from "@/components/Flag";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const footerLinks = [
     { label: t.common.home, href: "/" },
     { label: t.common.workbench, href: "/workspace" },
@@ -70,7 +71,10 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col gap-3 border-t border-dracula-card/50 pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {new Date().getFullYear()} apiFlash. {t.footer.rights}</p>
+          <p className="inline-flex items-center gap-2">
+            <Flag locale={language} size={14} />
+            &copy; {new Date().getFullYear()} apiFlash. {t.footer.rights}
+          </p>
           <p className="text-dracula-comment/80">{t.footer.tagline}</p>
         </div>
       </div>

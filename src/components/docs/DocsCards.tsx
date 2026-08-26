@@ -25,9 +25,10 @@ export default function DocsCards({ cards }: DocsCardsProps) {
             key={item.title}
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -3 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: index * 0.05 }}
-            className="rounded-2xl border border-dracula-card/75 bg-dracula-surface/60 p-5"
+            className="rounded-xl border border-dracula-card/75 bg-dracula-surface/60 p-5 transition-colors hover:border-dracula-cyan/50"
           >
             <Icon className="h-6 w-6 text-dracula-cyan" />
             <h2 className="mt-5 text-lg font-semibold text-dracula-fg">{item.title}</h2>

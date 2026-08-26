@@ -1,19 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Activity, BellRing, Braces, ChartNoAxesColumnIncreasing, Globe2, RadioTower, Repeat2, ShieldCheck } from "lucide-react";
+import { Activity, Braces, Database, Gauge, Globe2, Repeat2, Send } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { regionHealthPreview } from "@/lib/monitoring-preview";
+import { savedFlowsPreview } from "@/lib/monitoring-preview";
 
-const pillarIcons = [Activity, RadioTower, Globe2, Braces];
+const pillarIcons = [Activity, Send, Globe2, Braces];
+const pillarTags = ["GET /workbench", "POST /collections", "POST /auth/github", "GET /response"];
 
 export default function MonitoringPlatformSections() {
   const { t } = useLanguage();
   const metricCards = [
-    { label: t.home.metricsPreview.uptime, value: "99.98%", icon: ShieldCheck, colorClass: "text-dracula-green" },
-    { label: t.home.metricsPreview.p95, value: "142ms", icon: ChartNoAxesColumnIncreasing, colorClass: "text-dracula-cyan" },
-    { label: t.home.metricsPreview.incidents, value: "1", icon: BellRing, colorClass: "text-dracula-red" },
-    { label: t.home.metricsPreview.regions, value: "3/4", icon: Globe2, colorClass: "text-dracula-yellow" },
+    { label: t.home.metricsPreview.uptime, value: "1,204", icon: Send },
+    { label: t.home.metricsPreview.p95, value: "142ms", icon: Gauge },
+    { label: t.home.metricsPreview.incidents, value: "12", icon: Database },
+    { label: t.home.metricsPreview.regions, value: "92%", icon: Repeat2 },
   ];
 
   return (
@@ -27,12 +28,14 @@ export default function MonitoringPlatformSections() {
               key={pillar.title}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -4 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ delay: index * 0.05 }}
-              className="rounded-3xl border border-dracula-card/75 bg-dracula-surface/55 p-5"
+              className="hud-watermark rounded-xl border border-dracula-card/75 bg-dracula-surface/55 p-5 transition-colors hover:border-dracula-cyan/50"
             >
-              <Icon className="h-6 w-6 text-dracula-cyan" />
-              <h2 className="mt-5 text-lg font-semibold text-dracula-fg">{pillar.title}</h2>
+              <p className="request-tag">{pillarTags[index]}</p>
+              <Icon className="mt-3 h-6 w-6 text-dracula-cyan" />
+              <h2 className="mt-4 text-lg font-semibold text-dracula-fg">{pillar.title}</h2>
               <p className="mt-2 text-sm leading-6 text-dracula-comment">{pillar.text}</p>
             </motion.article>
           );
@@ -72,26 +75,26 @@ export default function MonitoringPlatformSections() {
           className="rounded-3xl border border-dracula-card/70 bg-dracula-surface/55 p-5"
         >
           <div className="grid gap-3 sm:grid-cols-2">
-            {metricCards.map(({ label, value, icon: Icon, colorClass }) => (
-              <div key={label} className="rounded-2xl border border-dracula-card bg-dracula-bg/45 p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-widest text-dracula-comment">{label}</span>
-                  <Icon className={`h-4 w-4 ${colorClass}`} />
+            {metricCards.map(({ label, value, icon: Icon }) => (
+              <div key={label} className="rounded-xl border border-dracula-card bg-dracula-bg/45 p-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-dracula-cyan/10">
+                  <Icon className="h-5 w-5 text-dracula-cyan" />
                 </div>
                 <p className="mt-3 font-mono text-3xl font-bold text-dracula-fg">{value}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-dracula-comment">{label}</p>
               </div>
             ))}
           </div>
           <div className="mt-4 rounded-2xl border border-dracula-card bg-dracula-bg/45 p-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-dracula-comment">{t.home.preview.regionComparison}</p>
             <div className="mt-4 space-y-3">
-              {regionHealthPreview.map((region) => (
-                <div key={region.label} className="grid grid-cols-[4.5rem_1fr_3.5rem] items-center gap-3">
-                  <span className="font-mono text-xs text-dracula-comment">{region.label}</span>
+              {savedFlowsPreview.map((flow) => (
+                <div key={flow.label} className="grid grid-cols-[4.5rem_1fr_3.5rem] items-center gap-3">
+                  <span className="font-mono text-xs text-dracula-comment">{flow.label}</span>
                   <span className="h-2 overflow-hidden rounded-full bg-dracula-card/70">
-                    <span className={`block h-full rounded-full ${region.widthClass} ${region.colorClass}`} />
+                    <span className={`block h-full rounded-full ${flow.widthClass} ${flow.colorClass}`} />
                   </span>
-                  <span className="text-right font-mono text-xs text-dracula-fg">{region.value}</span>
+                  <span className="text-right font-mono text-xs text-dracula-fg">{flow.value}</span>
                 </div>
               ))}
             </div>

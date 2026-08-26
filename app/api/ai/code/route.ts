@@ -29,7 +29,14 @@ export async function POST(request: NextRequest) {
     const reqData = parseResult.data;
     const language = reqData.language;
 
-    const result = await aiService.generateClientCode(userId, reqData, language);
+    const payload = {
+      ...reqData,
+      headers: (reqData.headers as Record<string, string>) || {},
+      body: reqData.body || "",
+      bodyType: reqData.bodyType || "json",
+    };
+
+    const result = await aiService.generateClientCode(userId, payload, language);
     return NextResponse.json(result);
   } catch (error: unknown) {
     return NextResponse.json({ error: getErrorMessage(error, "Failed to generate code") }, { status: 500 });

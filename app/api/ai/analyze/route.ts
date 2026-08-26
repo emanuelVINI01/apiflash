@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         responseBody: reqResData.responseBody || "",
       },
       lang,
-      !!forceRefresh
+      !!reqResData.forceRefresh
     );
 
     return NextResponse.json(result);

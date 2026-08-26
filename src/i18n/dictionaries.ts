@@ -68,10 +68,10 @@ export const dictionaries = {
       differenceText:
         "O fluxo e direto: monte uma request, envie pelo proxy server-side, salve na sua collection e carregue depois com o mesmo contexto.",
       metricsPreview: {
-        uptime: "Collections",
-        p95: "Request salva",
-        incidents: "Auth",
-        regions: "Historico",
+        uptime: "Requests enviadas",
+        p95: "Tempo medio de resposta",
+        incidents: "Collections salvas",
+        regions: "Taxa de cache hit",
       },
       timeline: [
         "Compose request",
@@ -446,10 +446,10 @@ export const dictionaries = {
       differenceText:
         "The loop is direct: compose a request, send it through the server-side proxy, save it to your collection, and reload it later with the same context.",
       metricsPreview: {
-        uptime: "Collections",
-        p95: "Saved request",
-        incidents: "Auth",
-        regions: "History",
+        uptime: "Requests sent",
+        p95: "Avg response time",
+        incidents: "Saved collections",
+        regions: "Cache hit rate",
       },
       timeline: [
         "Compose request",

@@ -66,8 +66,8 @@ export default function CollectionCard({
                 <h3 className="font-semibold text-dracula-fg">{request.name}</h3>
                 <p className="mt-1 break-all font-mono text-xs text-dracula-cyan">{request.url}</p>
                 <p className="mt-2 text-xs text-dracula-comment">
-                  {request.queryParams.filter((param) => param.enabled).length} params /{" "}
-                  {request.headers.filter((header) => header.enabled).length} headers / {request.auth.type}
+                  {request.queryParams.filter((param) => param.enabled).length} {t.request.advanced.paramsCount} /{" "}
+                  {request.headers.filter((header) => header.enabled).length} {t.request.advanced.headersCount} / {request.auth.type}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
