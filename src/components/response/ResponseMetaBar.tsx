@@ -27,7 +27,7 @@ export default function ResponseMetaBar({ response, onAnalyze }: ResponseMetaBar
       {onAnalyze && (
         <button
           onClick={onAnalyze}
-          className="flex min-w-0 items-center gap-1.5 rounded-lg bg-[#bd93f9]/10 hover:bg-[#bd93f9]/20 border border-[#bd93f9]/20 px-3 py-1.5 font-mono text-xs text-[#bd93f9] transition-colors cursor-pointer"
+          className="flex min-w-0 items-center gap-1.5 rounded-lg bg-accent/10 hover:bg-accent/20 border border-accent/20 px-3 py-1.5 font-mono text-xs text-accent transition-colors cursor-pointer"
         >
           <Sparkles className="h-3.5 w-3.5" />
           <span>Analyze with AI</span>

@@ -95,8 +95,8 @@ export default function AiAnalysisModal({ open, onClose, requestData, response }
         {/* Header */}
         <div className="flex items-center justify-between border-b border-dracula-comment/10 pb-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#bd93f9]/10">
-              <Sparkles className="h-4 w-4 text-[#bd93f9]" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
+              <Sparkles className="h-4 w-4 text-accent" />
             </div>
             <h3 className="text-lg font-black text-white sm:text-xl">
               AI Response Inspector
@@ -115,9 +115,9 @@ export default function AiAnalysisModal({ open, onClose, requestData, response }
           {isAnalyzing ? (
             <div className="flex min-h-[320px] flex-col items-center justify-center space-y-4 text-center">
               <div className="relative flex h-16 w-16 items-center justify-center">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#bd93f9]/10 opacity-75"></span>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#bd93f9]/20">
-                  <Loader2 className="h-6 w-6 animate-spin text-[#bd93f9]" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/10 opacity-75"></span>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20">
+                  <Loader2 className="h-6 w-6 animate-spin text-accent" />
                 </div>
               </div>
               <div>
@@ -153,7 +153,7 @@ export default function AiAnalysisModal({ open, onClose, requestData, response }
 
               {/* Description */}
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#bd93f9]">AI Summary</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">AI Summary</span>
                 <p className="mt-1 text-sm leading-relaxed text-[#f8f8f2]">
                   {analysis.description}
                 </p>
@@ -162,10 +162,10 @@ export default function AiAnalysisModal({ open, onClose, requestData, response }
               {/* TS Type Code Block */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#bd93f9]">TypeScript Interface</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent">TypeScript Interface</span>
                   <button
                     onClick={handleCopyType}
-                    className="flex items-center gap-1 text-xs text-[#8be9fd] hover:text-[#bd93f9] transition-colors cursor-pointer"
+                    className="flex items-center gap-1 text-xs text-[#8be9fd] hover:text-accent transition-colors cursor-pointer"
                   >
                     {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                     <span>{copied ? "Copied!" : "Copy declaration"}</span>

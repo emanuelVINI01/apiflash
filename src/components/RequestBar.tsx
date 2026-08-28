@@ -61,7 +61,7 @@ export default function RequestBar({
             type="button"
             onClick={onAiGenerateClick}
             disabled={isLoading}
-            className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#bd93f9]/20 bg-[#bd93f9]/10 text-[#bd93f9] hover:bg-[#bd93f9]/20 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+            className="flex h-12 w-12 items-center justify-center rounded-xl border border-accent/20 bg-accent/10 text-accent hover:bg-accent/20 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
             title="Generate Request with AI"
           >
             <Sparkles className="h-5 w-5" />

@@ -1,7 +1,7 @@
 import type { HttpMethod } from "@/lib/request-model";
 
 export const METHOD_TEXT_COLORS: Record<HttpMethod, string> = {
-  GET: "text-dracula-cyan",
+  GET: "text-red-alt",
   POST: "text-dracula-green",
   PUT: "text-dracula-orange",
   PATCH: "text-dracula-purple",
@@ -11,7 +11,7 @@ export const METHOD_TEXT_COLORS: Record<HttpMethod, string> = {
 };
 
 export function methodClass(method: string) {
-  if (method === "GET") return "border-dracula-cyan/25 bg-dracula-cyan/10 text-dracula-cyan";
+  if (method === "GET") return "border-red-alt/25 bg-red-alt/10 text-red-alt";
   if (method === "POST") return "border-dracula-green/25 bg-dracula-green/10 text-dracula-green";
   if (method === "DELETE") return "border-dracula-red/25 bg-dracula-red/10 text-dracula-red";
   if (method === "PUT") return "border-dracula-orange/25 bg-dracula-orange/10 text-dracula-orange";

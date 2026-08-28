@@ -54,8 +54,8 @@ export default function AiGenerateRequestModal({ open, onClose, onApplied }: AiG
         {/* Header */}
         <div className="flex items-center justify-between border-b border-dracula-comment/10 pb-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#bd93f9]/10">
-              <Sparkles className="h-4 w-4 text-[#bd93f9]" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
+              <Sparkles className="h-4 w-4 text-accent" />
             </div>
             <h3 className="text-lg font-black text-white sm:text-xl">
               AI Request Designer
@@ -74,11 +74,11 @@ export default function AiGenerateRequestModal({ open, onClose, onApplied }: AiG
           {!generatedDraft ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#bd93f9]">
+                <label className="text-xs font-bold uppercase tracking-wider text-accent">
                   Describe your HTTP request
                 </label>
                 <textarea
-                  className="w-full rounded-xl bg-black/35 border border-dracula-comment/20 p-3.5 text-sm text-white placeholder-white/20 h-24 focus:outline-none focus:border-[#bd93f9] focus:ring-1 focus:ring-[#bd93f9] resize-none"
+                  className="w-full rounded-xl bg-black/35 border border-dracula-comment/20 p-3.5 text-sm text-white placeholder-white/20 h-24 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent resize-none"
                   placeholder="E.g., Fetch list of users from github, passing application/json accept header and page=1 as query param"
                   value={promptText}
                   onChange={(e) => setPromptText(e.target.value)}
@@ -96,7 +96,7 @@ export default function AiGenerateRequestModal({ open, onClose, onApplied }: AiG
               <button
                 type="submit"
                 disabled={isGenerating || !promptText.trim()}
-                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-[#bd93f9] hover:bg-[#bd93f9]/90 text-black text-sm font-black transition-all cursor-pointer disabled:opacity-50"
+                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-black transition-all cursor-pointer disabled:opacity-50"
               >
                 {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 Generate Endpoint Configuration
@@ -125,7 +125,7 @@ export default function AiGenerateRequestModal({ open, onClose, onApplied }: AiG
 
               {/* Headers / Params Summary */}
               <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#bd93f9]">Extracted Headers</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-accent">Extracted Headers</span>
                 {generatedDraft.headers && generatedDraft.headers.length > 0 ? (
                   <ul className="space-y-1 text-xs">
                     {generatedDraft.headers.map((h, i) => (
@@ -145,7 +145,7 @@ export default function AiGenerateRequestModal({ open, onClose, onApplied }: AiG
               {generatedDraft.body && (
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#bd93f9]">Raw Body Template</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-accent">Raw Body Template</span>
                     <span className="text-[10px] uppercase font-bold text-dracula-comment">{generatedDraft.bodyType}</span>
                   </div>
                   <pre className="rounded-xl border border-dracula-comment/10 bg-[#111217] p-3 text-xs text-[#f8f8f2] max-h-32 overflow-y-auto font-mono scrollbar-thin">
@@ -164,7 +164,7 @@ export default function AiGenerateRequestModal({ open, onClose, onApplied }: AiG
                 </button>
                 <button
                   onClick={handleApply}
-                  className="h-10 rounded-xl bg-[#bd93f9] hover:bg-[#bd93f9]/90 text-black text-xs font-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="h-10 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   Apply to Workbench
                   <ArrowRight className="h-3.5 w-3.5" />

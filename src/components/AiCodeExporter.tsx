@@ -77,7 +77,7 @@ export default function AiCodeExporter({ draft }: AiCodeExporterProps) {
       <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <Code2 className="h-4 w-4 text-[#bd93f9]" />
+            <Code2 className="h-4 w-4 text-accent" />
             <h3 className="text-xs font-semibold uppercase tracking-wider text-dracula-comment">
               AI Client SDK Exporter
             </h3>
@@ -95,7 +95,7 @@ export default function AiCodeExporter({ draft }: AiCodeExporterProps) {
               onClick={() => setSelectedLang(lang)}
               className={`rounded px-2.5 py-1 text-[11px] font-bold transition-all cursor-pointer ${
                 selectedLang === lang
-                  ? "bg-[#bd93f9] text-black"
+                  ? "bg-primary text-primary-foreground"
                   : "text-dracula-comment hover:text-dracula-fg"
               }`}
             >
@@ -108,7 +108,7 @@ export default function AiCodeExporter({ draft }: AiCodeExporterProps) {
       {/* Code Body */}
       {isGeneratingCode ? (
         <div className="flex min-h-[140px] flex-col items-center justify-center space-y-2 text-center bg-dracula-card/25 border border-dracula-comment/5 rounded-lg">
-          <Loader2 className="h-5 w-5 animate-spin text-[#bd93f9]" />
+          <Loader2 className="h-5 w-5 animate-spin text-accent" />
           <p className="text-[10px] text-dracula-comment">Generating technical SDK code...</p>
         </div>
       ) : error ? (
@@ -138,7 +138,7 @@ export default function AiCodeExporter({ draft }: AiCodeExporterProps) {
           </div>
           <div className="flex justify-between items-center text-[10px] text-dracula-comment px-1">
             <span>Generated as {getLanguageLabel(selectedLang)}</span>
-            <span className="flex items-center gap-1 text-[#bd93f9]">
+            <span className="flex items-center gap-1 text-accent">
               <Sparkles className="h-3 w-3 animate-pulse" /> AI Native
             </span>
           </div>

@@ -19,7 +19,7 @@ export default function GlobalError({
       <p className="text-zinc-400">{error.message || "An unexpected error occurred."}</p>
       <button
         onClick={() => reset()}
-        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md transition-colors"
+        className="px-4 py-2 bg-error hover:bg-error/90 text-white rounded-md transition-colors"
       >
         Try again
       </button>

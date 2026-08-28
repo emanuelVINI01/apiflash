@@ -29,7 +29,7 @@ export default function CollectionsHeader() {
       </div>
       <Link
         href="/workspace#workbench"
-        className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-dracula-purple px-5 text-sm font-semibold text-dracula-bg shadow-lg shadow-dracula-purple/20"
+        className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
       >
         {t.collectionsPage.openWorkbench}
         <ArrowRight className="h-4 w-4" />

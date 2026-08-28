@@ -18,8 +18,19 @@
   --warning: #ffb86c;
   --info: #8be9fd;
 
-  /* apiFlash accent: cyan (matches the lightning-bolt logo, same hex as --info) */
-  --accent: #8be9fd;
+  /* Deeper red, used only for the GET method badge so it reads as red like
+     DELETE now does, while staying visually distinct from it (shade, not hue). */
+  --red-alt: #dc2626;
+
+  /* apiFlash accent: green (focus ring / selection / decorative glow) */
+  --accent: #34d399;
+  --accent-rgb: 52, 211, 153;
+
+  /* shadcn-style neutral tokens for solid CTA buttons — kept separate from
+     --accent so primary buttons read as dark-mode-neutral instead of a neon
+     fill with black text. */
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
 
   --font-geist-sans: var(--font-jetbrains-mono), "JetBrains Mono", "Fira Code", ui-monospace, "SFMono-Regular", Menlo,
     Monaco, Consolas, monospace;
@@ -34,7 +45,9 @@
   --dracula-fg: var(--fg);
   --dracula-comment: var(--fg-muted);
   --dracula-cyan: var(--info);
-  --dracula-purple: #bd93f9;
+  /* Aliased to --accent (not a literal) so every dracula-purple utility class
+     tracks the current accent color — same pattern typedash uses for --purple. */
+  --dracula-purple: var(--accent);
   --dracula-green: var(--success);
   --dracula-pink: #ff79c6;
   --dracula-yellow: #f1fa8c;
@@ -57,6 +70,9 @@
   --color-warning: var(--warning);
   --color-info: var(--info);
   --color-accent: var(--accent);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-red-alt: var(--red-alt);
 
   --color-dracula-bg: var(--dracula-bg);
   --color-dracula-surface: var(--dracula-surface);
@@ -166,13 +182,19 @@ body::before {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--dracula-cyan);
+  background: var(--accent);
 }
 
 /* Selection */
 ::selection {
-  background: var(--dracula-cyan);
-  color: var(--dracula-bg);
+  background: var(--accent);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .glass {
@@ -187,7 +209,7 @@ body::before {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(139, 233, 253, 0.12), transparent);
+  background: linear-gradient(180deg, transparent, rgba(var(--accent-rgb), 0.12), transparent);
   opacity: 0.18;
   transform: translateY(-100%);
   animation: terminal-scan 5.5s ease-in-out infinite;
@@ -217,8 +239,8 @@ body::before {
   pointer-events: none;
   opacity: 0.05;
   background-image:
-    linear-gradient(rgba(139, 233, 253, 0.6) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 233, 253, 0.6) 1px, transparent 1px);
+    linear-gradient(rgba(var(--accent-rgb), 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.6) 1px, transparent 1px);
   background-size: 22px 22px;
   -webkit-mask-image: radial-gradient(circle at top right, black, transparent 70%);
   mask-image: radial-gradient(circle at top right, black, transparent 70%);

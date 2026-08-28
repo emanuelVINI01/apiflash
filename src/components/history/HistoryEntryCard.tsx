@@ -50,7 +50,7 @@ export default function HistoryEntryCard({
           <button
             type="button"
             onClick={() => onRunAgain(entry)}
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-dracula-purple px-3 text-xs font-semibold text-dracula-bg transition-opacity hover:opacity-90"
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
             <Play className="h-3.5 w-3.5" />
             {runAgainLabel}
