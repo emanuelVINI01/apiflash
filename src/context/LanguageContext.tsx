@@ -17,7 +17,7 @@ function setDocumentLanguage(language: Language) {
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("pt");
+  const [language, setLanguageState] = useState<Language>("en");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -26,9 +26,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       const nextLanguage =
         storedLang === "pt" || storedLang === "en"
           ? storedLang
-          : navigator.language.toLowerCase().startsWith("en")
-            ? "en"
-            : "pt";
+          : navigator.language.toLowerCase().startsWith("pt")
+            ? "pt"
+            : "en";
 
       setLanguageState(nextLanguage);
       setDocumentLanguage(nextLanguage);

@@ -1,3 +1,5 @@
+import * as net from "net";
+import { Agent } from "undici";
 import { BODY_METHODS, HTTP_METHODS } from "@/lib/request-model";
 
 export const PROXY_CORS_HEADERS = {
@@ -37,12 +39,25 @@ export interface ProxyResponsePayload {
   duration: number;
 }
 
-import { validateProxyUrlSecurity } from "@/security/proxy-security";
+import { validateProxyUrlSecurity, type ProxyUrlValidation } from "@/security/proxy-security";
 
-export async function validateProxyUrl(url: unknown): Promise<string | null> {
+export async function validateProxyUrl(url: unknown): Promise<ProxyUrlValidation | null> {
   if (typeof url !== "string" || !url) return null;
 
   return await validateProxyUrlSecurity(url);
+}
+
+// Pins the outgoing connection to the IP that was actually validated,
+// so a second, independent DNS resolution at fetch time (DNS rebinding)
+// can't silently redirect the request to a different (internal) host.
+function createPinnedDispatcher(ip: string) {
+  return new Agent({
+    connect: {
+      lookup: (_hostname, _options, callback) => {
+        callback(null, ip, net.isIP(ip) === 6 ? 6 : 4);
+      },
+    },
+  });
 }
 
 export function normalizeProxyMethod(method: unknown) {
@@ -89,8 +104,8 @@ export function collectResponseHeaders(response: Response) {
 }
 
 export async function executeProxyRequest(payload: ProxyRequestPayload): Promise<ProxyResponsePayload> {
-  const initialUrl = await validateProxyUrl(payload.url);
-  if (!initialUrl) {
+  const initialValidation = await validateProxyUrl(payload.url);
+  if (!initialValidation) {
     throw new Error("Invalid URL");
   }
 
@@ -100,7 +115,8 @@ export async function executeProxyRequest(payload: ProxyRequestPayload): Promise
   const start = performance.now();
 
   try {
-    let currentUrl = initialUrl;
+    let currentUrl = initialValidation.url;
+    let currentIp = initialValidation.ip;
     let redirects = 0;
     let response: Response;
 
@@ -112,19 +128,21 @@ export async function executeProxyRequest(payload: ProxyRequestPayload): Promise
         cache: "no-store",
         redirect: "manual",
         signal: controller.signal,
-      });
+        dispatcher: createPinnedDispatcher(currentIp),
+      } as RequestInit & { dispatcher: Agent });
 
       const isRedirect = response.status >= 300 && response.status < 400;
       if (isRedirect && payload.followRedirects !== false && redirects < 5) {
         const location = response.headers.get("location");
         if (!location) break;
-        
+
         const nextUrl = new URL(location, currentUrl).toString();
-        const validNextUrl = await validateProxyUrl(nextUrl);
-        if (!validNextUrl) {
+        const validNext = await validateProxyUrl(nextUrl);
+        if (!validNext) {
           throw new Error("Redirected to a blocked URL");
         }
-        currentUrl = validNextUrl;
+        currentUrl = validNext.url;
+        currentIp = validNext.ip;
         redirects++;
         continue;
       }
